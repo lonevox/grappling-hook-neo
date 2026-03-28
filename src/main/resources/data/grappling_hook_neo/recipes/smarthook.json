@@ -1,0 +1,25 @@
+{
+	"type": "minecraft:crafting_shapeless",
+	"ingredients": [
+		{
+			"item": "grappling_hook_neo:grapplinghook"
+		}, 
+		{
+			"item": "grappling_hook_neo:motorupgradeitem"
+		},
+		{
+			"item": "minecraft:redstone"
+		}
+	],
+	"result": {
+		"item": "grappling_hook_neo:grapplinghook",
+		"nbt": { "custom": {
+			"throwspeed": 3.5,
+			"maxlen": 60,
+
+			"motor": true,
+			"smartmotor": true,
+			"playermovementmult": 2
+		}}
+	}
+}

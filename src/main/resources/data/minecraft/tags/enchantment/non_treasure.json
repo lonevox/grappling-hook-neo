@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "grappling_hook_neo:wallrun",
+    "grappling_hook_neo:double_jump",
+    "grappling_hook_neo:sliding"
+  ]
+}

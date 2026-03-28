@@ -1,0 +1,22 @@
+ {
+ 	"slide": {
+ 		"category": "player",
+		"subtitle": "grappling_hook_neo.subtitle.slide",
+		"sounds": [ "grappling_hook_neo:slide1", "grappling_hook_neo:slide2", "grappling_hook_neo:slide3" ]
+	},
+	"doublejump": {
+		"category": "player",
+	   "subtitle": "grappling_hook_neo.subtitle.doublejump",
+	   "sounds": [ "grappling_hook_neo:jump1", "grappling_hook_neo:jump2", "grappling_hook_neo:jump3", "grappling_hook_neo:jump4" ]
+   },
+   "rocket": {
+	"category": "player",
+   "subtitle": "grappling_hook_neo.subtitle.rocket",
+   "sounds": [ "grappling_hook_neo:rocket"]
+},
+   "enderstaff": {
+	"category": "player",
+   "subtitle": "grappling_hook_neo.subtitle.enderstaff",
+   "sounds": [ "grappling_hook_neo:enderstaff"]
+}
+}

@@ -1,0 +1,17 @@
+{
+	"type": "minecraft:crafting_shapeless",
+	"ingredients": [
+		{
+			"item": "grappling_hook_neo:baseupgradeitem"
+		}, 
+		{
+			"item": "grappling_hook_neo:grapplinghook"
+		},
+		{
+			"item": "grappling_hook_neo:grapplinghook"
+		}
+	],
+	"result": {
+		"item": "grappling_hook_neo:doubleupgradeitem"
+	}
+}

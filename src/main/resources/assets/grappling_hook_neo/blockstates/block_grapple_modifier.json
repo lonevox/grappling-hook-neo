@@ -1,0 +1,5 @@
+{
+    "variants": {
+        "": { "model": "grappling_hook_neo:block/block_grapple_modifier" }
+    }
+}
