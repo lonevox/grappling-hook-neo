@@ -95,16 +95,23 @@ public class GrappleController {
 	}
 	
 	public void unattach() {
-		if (ClientProxyInterface.proxy.unregisterController(this.entityId) != null) {
-			this.attached = false;
-			
-			if (this.controllerId != GrapplemodUtils.AIRID) {
-				CommonSetup.network.sendToServer(new GrappleEndMessage(this.entityId, this.grapplehookEntityIds));
-				ClientProxyInterface.proxy.createControl(GrapplemodUtils.AIRID, -1, this.entityId, this.entity.level(), new Vec(0,0,0), null, this.custom);
-			}
-		}
+		this.unattach(true);
 	}
-	
+
+	public void unattach(boolean allowFollowupControllers) {
+		if (ClientProxyInterface.proxy.unregisterController(this.entityId) == null)
+			return;
+
+		this.attached = false;
+
+		if (this.controllerId == GrapplemodUtils.AIRID)
+			return;
+
+		CommonSetup.network.sendToServer(new GrappleEndMessage(this.entityId, this.grapplehookEntityIds));
+
+		if (allowFollowupControllers)
+			ClientProxyInterface.proxy.createControl(GrapplemodUtils.AIRID, -1, this.entityId, this.entity.level(), new Vec(0,0,0), null, this.custom);
+	}
 	
 	public void doClientTick() {
 		if (this.attached) {
