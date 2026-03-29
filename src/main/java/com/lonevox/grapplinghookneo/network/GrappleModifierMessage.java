@@ -13,6 +13,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jetbrains.annotations.NotNull;
 
 public class GrappleModifierMessage implements CustomPacketPayload {
     public static final Type<GrappleModifierMessage> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(GrapplingHookNeo.MODID, "grapple_modifier"));
@@ -45,11 +46,8 @@ public class GrappleModifierMessage implements CustomPacketPayload {
 
     public static void handle(GrappleModifierMessage message, IPayloadContext context) {
         ServerPlayer player = (ServerPlayer) context.player();
-        if (player == null) {
-            return;
-        }
 
-        Level w = player.level();
+		Level w = player.level();
         BlockEntity ent = w.getBlockEntity(message.pos);
 
         if (ent instanceof TileEntityGrappleModifier tileEntityGrappleModifier) {
@@ -58,7 +56,7 @@ public class GrappleModifierMessage implements CustomPacketPayload {
     }
 
     @Override
-    public Type<GrappleModifierMessage> type() {
+    public @NotNull Type<GrappleModifierMessage> type() {
         return TYPE;
     }
 }

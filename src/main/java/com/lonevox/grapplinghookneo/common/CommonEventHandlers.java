@@ -30,22 +30,18 @@ import java.util.HashSet;
 public class CommonEventHandlers {
     public CommonEventHandlers() {
         NeoForge.EVENT_BUS.register(this);
-        AutoConfig.register(GrappleConfig.class, Toml4jConfigSerializer<GrappleConfig>::new);
+        AutoConfig.register(GrappleConfig.class, Toml4jConfigSerializer::new);
     }
 
     @SubscribeEvent
     public void onBlockBreak(BreakEvent event) {
         Player player = event.getPlayer();
-        if (player != null) {
-            ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
-            if (stack != null) {
-                Item item = stack.getItem();
-                if (item instanceof GrapplehookItem) {
-                    event.setCanceled(true);
-                }
-            }
-        }
-    }
+		ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
+		Item item = stack.getItem();
+		if (item instanceof GrapplehookItem) {
+			event.setCanceled(true);
+		}
+	}
 
     @SubscribeEvent
     public void onLivingDeath(LivingDeathEvent event) {

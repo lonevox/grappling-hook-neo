@@ -33,6 +33,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
@@ -93,9 +94,7 @@ public class GrapplehookEntity extends ThrowableItemProjectile implements IEntit
 	public double pull;
 	
 	public double taut = 1;
-	
-	public boolean ignoreFrustumCheck = true;
-	
+
 	public boolean isDouble = false;
 	
 	public double r;
@@ -236,7 +235,7 @@ public class GrapplehookEntity extends ThrowableItemProjectile implements IEntit
 	    			Vec pos = Vec.positionVec(this);
 	    			if (magnetBlock == null) {
 		    			if (prevPos != null) {
-			    			HashMap<BlockPos, Boolean> checkedset = new HashMap<BlockPos, Boolean>();
+			    			HashMap<BlockPos, Boolean> checkedset = new HashMap<>();
 			    			Vec vector = pos.sub(prevPos);
 			    			if (vector.length() > 0) {
 				    			Vec normvector = vector.normalize();
@@ -315,7 +314,7 @@ public class GrapplehookEntity extends ThrowableItemProjectile implements IEntit
 	}
 	
 	@Override
-	public AABB getBoundingBoxForCulling() {
+	public @NotNull AABB getBoundingBoxForCulling() {
 		if (this.shootingEntity == null) {
 			return super.getBoundingBoxForCulling();
 		}
@@ -323,7 +322,7 @@ public class GrapplehookEntity extends ThrowableItemProjectile implements IEntit
 	}
 
 	@Override
-	protected void onHit(HitResult movingobjectposition) {
+	protected void onHit(@NotNull HitResult movingObjectPosition) {
 		if (!this.level().isClientSide) {
 			if (this.attached) {
 				return;
@@ -331,56 +330,55 @@ public class GrapplehookEntity extends ThrowableItemProjectile implements IEntit
 			if (this.shootingEntity == null || this.shootingEntityID == 0) {
 				return;
 			}
-			if (movingobjectposition == null) {
-				return;
-			}
-			
+
 			Vec vec3d = Vec.positionVec(this);
 	        Vec vec3d1 = vec3d.add(Vec.motionVec(this));
 
-			if (movingobjectposition instanceof EntityHitResult && !GrappleConfig.getConf().grapplinghook.other.hookaffectsentities) {
-				onHit(GrapplemodUtils.rayTraceBlocks(this.level(), vec3d, vec3d1));
+			if (movingObjectPosition instanceof EntityHitResult && !GrappleConfig.getConf().grapplinghook.other.hookaffectsentities) {
+				var blockHitResult = GrapplemodUtils.rayTraceBlocks(this.level(), vec3d, vec3d1);
+				if (blockHitResult != null) {
+					onHit(blockHitResult);
+				}
 		        return;
 			}
 			
 			BlockHitResult blockhit = null;
-			if (movingobjectposition instanceof BlockHitResult) {
-				blockhit = (BlockHitResult) movingobjectposition;
+			if (movingObjectPosition instanceof BlockHitResult) {
+				blockhit = (BlockHitResult) movingObjectPosition;
 			}
 			
 			if (blockhit != null) {
 				BlockPos blockpos = blockhit.getBlockPos();
-				if (blockpos != null) {
-					Block block = this.level().getBlockState(blockpos).getBlock();
-					if (GrappleConfigUtils.breaksBlock(block)) {
-						this.level().destroyBlock(blockpos, true);
-				        onHit(GrapplemodUtils.rayTraceBlocks(this.level(), vec3d, vec3d1));
-				        return;
+				Block block = this.level().getBlockState(blockpos).getBlock();
+				if (GrappleConfigUtils.breaksBlock(block)) {
+					this.level().destroyBlock(blockpos, true);
+					var blockHitResult = GrapplemodUtils.rayTraceBlocks(this.level(), vec3d, vec3d1);
+					if (blockHitResult != null) {
+						onHit(blockHitResult);
 					}
+					return;
 				}
 			}
 			
-			if (movingobjectposition instanceof EntityHitResult) {
+			if (movingObjectPosition instanceof EntityHitResult entityHit) {
 				// hit entity
-				EntityHitResult entityHit = (EntityHitResult) movingobjectposition;
 				Entity entity = entityHit.getEntity();
-				if (entity == this.shootingEntity || entity == null) {
+				if (entity == this.shootingEntity) {
 					return;
 				}
 				
-				Vec playerpos = Vec.positionVec(this.shootingEntity);
-				Vec entitypos = Vec.positionVec(entity);
-				Vec yank = playerpos.sub(entitypos).mult(0.4);
+				Vec playerPos = Vec.positionVec(this.shootingEntity);
+				Vec entityPos = Vec.positionVec(entity);
+				Vec yank = playerPos.sub(entityPos).mult(0.4);
 				yank.y = Math.min(yank.y, 2);
-				Vec newmotion = Vec.motionVec(entity).add(yank);
-				entity.setDeltaMovement(newmotion.toVec3d());
+				Vec newMotion = Vec.motionVec(entity).add(yank);
+				entity.setDeltaMovement(newMotion.toVec3d());
 				
 				this.removeServer();
-				return;
 			} else if (blockhit != null) {
 				BlockPos blockpos = blockhit.getBlockPos();
 				
-				Vec vec3 = new Vec(movingobjectposition.getLocation());
+				Vec vec3 = new Vec(movingObjectPosition.getLocation());
 
 				this.serverAttach(blockpos, vec3, blockhit.getDirection());
 			} else {
@@ -390,7 +388,7 @@ public class GrapplehookEntity extends ThrowableItemProjectile implements IEntit
 	}
 
 	@Override
-	protected Item getDefaultItem() {
+	protected @NotNull Item getDefaultItem() {
 		return CommonSetup.grapplingHookItem.get();
 	}
 	
@@ -489,47 +487,45 @@ public class GrapplehookEntity extends ThrowableItemProjectile implements IEntit
         	for (int y = (int)p.y - radius; y <= (int)p.y + radius; y++) {
             	for (int z = (int)p.z - radius; z <= (int)p.z + radius; z++) {
 			    	BlockPos pos = new BlockPos(x, y, z);
-			    	if (pos != null) {
-				    	if (hasBlock(pos, checkedset)) {
-				    		Vec distvec = new Vec(pos.getX(), pos.getY(), pos.getZ());
-				    		distvec.sub_ip(p);
-				    		double dist = distvec.length();
-				    		if (closestpos == null || dist < closestdist) {
-				    			closestpos = pos;
-				    			closestdist = dist;
-				    		}
-				    	}
-			    	}
-            	}
+					if (hasBlock(pos, checkedset)) {
+						Vec distvec = new Vec(pos.getX(), pos.getY(), pos.getZ());
+						distvec.sub_ip(p);
+						double dist = distvec.length();
+						if (closestpos == null || dist < closestdist) {
+							closestpos = pos;
+							closestdist = dist;
+						}
+					}
+				}
 	    	}
     	}
 		return closestpos;
 	}
 
 	// used for magnet attraction
-	public boolean hasBlock(BlockPos pos, HashMap<BlockPos, Boolean> checkedset) {
-    	if (!checkedset.containsKey(pos)) {
+	public boolean hasBlock(BlockPos pos, HashMap<BlockPos, Boolean> checkedSet) {
+    	if (!checkedSet.containsKey(pos)) {
     		boolean isblock = false;
 	    	BlockState blockstate = this.level().getBlockState(pos);
 	    	Block b = blockstate.getBlock();
 			if (GrappleConfigUtils.attachesBlock(b)) {
 		    	if (!(blockstate.isAir())) {
 			    	VoxelShape BB = blockstate.getCollisionShape(this.level(), pos);
-			    	if (BB != null && !BB.isEmpty()) {
+			    	if (!BB.isEmpty()) {
 			    		isblock = true;
 			    	}
 		    	}
 			}
 			
-	    	checkedset.put(pos, (Boolean) isblock);
+	    	checkedSet.put(pos, isblock);
 	    	return isblock;
     	} else {
-    		return checkedset.get(pos);
+    		return checkedSet.get(pos);
     	}
 	}
 	
 	@Override
-	public ItemStack getItem() {
+	public @NotNull ItemStack getItem() {
 		return new ItemStack(this.getDefaultItem());
 	}
 }

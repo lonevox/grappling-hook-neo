@@ -1,17 +1,16 @@
 package com.lonevox.grapplinghookneo.items;
 
 import com.lonevox.grapplinghookneo.client.ClientProxyInterface;
-import com.lonevox.grapplinghookneo.common.CommonSetup;
 import com.lonevox.grapplinghookneo.config.GrappleConfig;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterials;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -39,18 +38,12 @@ public class LongFallBoots extends ArmorItem {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(ItemStack stack, Item.TooltipContext tooltipContext, List<Component> list, TooltipFlag par4) {
+    public void appendHoverText(ItemStack stack, Item.@NotNull TooltipContext tooltipContext, @NotNull List<Component> list, @NotNull TooltipFlag par4) {
         if (!stack.isEnchanted()) {
             if (GrappleConfig.getConf().longfallboots.longfallbootsrecipe) {
                 list.add(Component.literal(ClientProxyInterface.proxy.localize("grappletooltip.longfallbootsrecipe.desc")));
             }
         }
         list.add(Component.literal(ClientProxyInterface.proxy.localize("grappletooltip.longfallboots.desc")));
-    }
-
-
-    public static void addToTab(CreativeModeTab.Output items) {
-        ItemStack stack = new ItemStack(CommonSetup.longFallBootsItem.get());
-        items.accept(stack);
     }
 }

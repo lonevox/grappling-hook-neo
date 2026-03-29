@@ -12,6 +12,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jetbrains.annotations.NotNull;
 
 public class KeypressMessage implements CustomPacketPayload {
     public static final Type<KeypressMessage> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(GrapplingHookNeo.MODID, "keypress"));
@@ -41,36 +42,30 @@ public class KeypressMessage implements CustomPacketPayload {
 
     public static void handle(KeypressMessage message, IPayloadContext context) {
         final ServerPlayer player = (ServerPlayer) context.player();
-        if (player != null) {
-            ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
-            if (stack != null) {
-                Item item = stack.getItem();
-                if (item instanceof KeypressItem keypressItem) {
-                    if (message.isDown) {
-                        keypressItem.onCustomKeyDown(stack, player, message.key, true);
-                    } else {
-                        keypressItem.onCustomKeyUp(stack, player, message.key, true);
-                    }
-                    return;
-                }
+		ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
+        Item mainHandItem = stack.getItem();
+        if (mainHandItem instanceof KeypressItem keypressItem) {
+            if (message.isDown) {
+                keypressItem.onCustomKeyDown(stack, player, message.key, true);
+            } else {
+                keypressItem.onCustomKeyUp(stack, player, message.key, true);
             }
-
-            stack = player.getItemInHand(InteractionHand.OFF_HAND);
-            if (stack != null) {
-                Item item = stack.getItem();
-                if (item instanceof KeypressItem keypressItem) {
-                    if (message.isDown) {
-                        keypressItem.onCustomKeyDown(stack, player, message.key, false);
-                    } else {
-                        keypressItem.onCustomKeyUp(stack, player, message.key, false);
-                    }
-                }
-            }
+            return;
         }
-    }
+
+		stack = player.getItemInHand(InteractionHand.OFF_HAND);
+		Item offHandItem = stack.getItem();
+		if (offHandItem instanceof KeypressItem keypressItem) {
+			if (message.isDown) {
+				keypressItem.onCustomKeyDown(stack, player, message.key, false);
+			} else {
+				keypressItem.onCustomKeyUp(stack, player, message.key, false);
+			}
+		}
+	}
 
     @Override
-    public Type<KeypressMessage> type() {
+    public @NotNull Type<KeypressMessage> type() {
         return TYPE;
     }
 }

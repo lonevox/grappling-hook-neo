@@ -22,6 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -78,8 +79,8 @@ public class RenderGrapplehookEntity<T extends GrapplehookEntity> extends Entity
      * double d2, float f, float f1). But JAD is pre 1.5 so doe
      */
     @Override
-    public void render(T hookEntity, float p_225623_2_, float partialTicks, PoseStack matrix, MultiBufferSource rendertype, int p_225623_6_) {
-		if (hookEntity == null || !hookEntity.isAlive()) {
+    public void render(@NotNull T hookEntity, float p_225623_2_, float partialTicks, @NotNull PoseStack matrix, @NotNull MultiBufferSource rendertype, int p_225623_6_) {
+		if (!hookEntity.isAlive()) {
 			return;
 		}
 		
@@ -90,21 +91,19 @@ public class RenderGrapplehookEntity<T extends GrapplehookEntity> extends Entity
 		if (e == null || !e.isAlive()) {
 			return;
 		}
-		
-		LivingEntity playerentity = e;
-		
-		/** get player hand position **/
-		
+
+		//// get the player hand position ////
+
 		// is right hand?
-		int hand_right = (playerentity.getMainArm() == HumanoidArm.RIGHT ? 1 : -1) * (hookEntity.rightHand ? 1 : -1);
+		int hand_right = (e.getMainArm() == HumanoidArm.RIGHT ? 1 : -1) * (hookEntity.rightHand ? 1 : -1);
 		
 		// attack/swing progress
-		float f = playerentity.getAttackAnim(partialTicks);
+		float f = e.getAttackAnim(partialTicks);
 		float f1 = Mth.sin(Mth.sqrt(f) * (float)Math.PI);
 		
 		// get the offset from the center of the head to the hand
 		Vec hand_offset;
-		if ((this.entityRenderDispatcher.options == null || this.entityRenderDispatcher.options.getCameraType().isFirstPerson()) && playerentity == Minecraft.getInstance().player) {
+		if (this.entityRenderDispatcher.options.getCameraType().isFirstPerson() && e == Minecraft.getInstance().player) {
 			// if first person
 			
 			// base hand offset (no swing, when facing +Z)
@@ -115,25 +114,25 @@ public class RenderGrapplehookEntity<T extends GrapplehookEntity> extends Entity
 			hand_offset = hand_offset.rotatePitch(-f1 * 0.7F);
 			hand_offset = hand_offset.rotateYaw(-f1 * 0.5F);
 			// apply looking direction
-			hand_offset = hand_offset.rotatePitch(-Vec.lerp(partialTicks, playerentity.xRotO, playerentity.getXRot()) * ((float)Math.PI / 180F));
-			hand_offset = hand_offset.rotateYaw(Vec.lerp(partialTicks, playerentity.yRotO, playerentity.getYRot()) * ((float)Math.PI / 180F));
+			hand_offset = hand_offset.rotatePitch(-Vec.lerp(partialTicks, e.xRotO, e.getXRot()) * ((float)Math.PI / 180F));
+			hand_offset = hand_offset.rotateYaw(Vec.lerp(partialTicks, e.yRotO, e.getYRot()) * ((float)Math.PI / 180F));
 		} else {
 			// if third person
 			
 			// base hand offset (no swing, when facing +Z)
-			hand_offset = new Vec((double) hand_right * -0.36D, -0.65D + (playerentity.isCrouching() ? -0.1875F : 0.0F), 0.6D);
+			hand_offset = new Vec((double) hand_right * -0.36D, -0.65D + (e.isCrouching() ? -0.1875F : 0.0F), 0.6D);
 			// apply swing
 			hand_offset = hand_offset.rotatePitch(f1 * 0.7F);
 			// apply body rotation
-			hand_offset = hand_offset.rotateYaw(Vec.lerp(partialTicks, playerentity.yBodyRotO, playerentity.yBodyRot) * ((float)Math.PI / 180F));
+			hand_offset = hand_offset.rotateYaw(Vec.lerp(partialTicks, e.yBodyRotO, e.yBodyRot) * ((float)Math.PI / 180F));
 		}
 		
 		// get the hand position
-		hand_offset.y += playerentity.getEyeHeight();
-		Vec hand_position = hand_offset.add(Vec.partialPositionVec(playerentity, partialTicks));
+		hand_offset.y += e.getEyeHeight();
+		Vec hand_position = hand_offset.add(Vec.partialPositionVec(e, partialTicks));
         
 		
-		/** draw hook **/
+		//// draw hook ////
 		
 		// get direction of rope where hook is attached
 		Vec attach_dir = Vec.motionVec(hookEntity).mult(-1);
@@ -168,8 +167,8 @@ public class RenderGrapplehookEntity<T extends GrapplehookEntity> extends Entity
 		matrix.mulPose(rotatedAxis(-45.0f, Z_AXIS));
 		
 		// draw hook
-		ItemStack stack = this.getStackToRender(hookEntity);
-		BakedModel bakedmodel = context.getItemRenderer().getModel(stack, hookEntity.level(), (LivingEntity)null, hookEntity.getId());
+		ItemStack stack = this.getStackToRender();
+		BakedModel bakedmodel = context.getItemRenderer().getModel(stack, hookEntity.level(), null, hookEntity.getId());
         context.getItemRenderer().render(stack, ItemDisplayContext.NONE, false, matrix, rendertype, p_225623_6_, OverlayTexture.NO_OVERLAY, bakedmodel);
 
 		// revert transformation
@@ -220,7 +219,7 @@ public class RenderGrapplehookEntity<T extends GrapplehookEntity> extends Entity
 		matrix.popPose();
 		*/
 		
-		/** draw rope **/
+		//// draw rope ////
 		
 		// transformation (no tranformation)
         matrix.pushPose();
@@ -234,7 +233,7 @@ public class RenderGrapplehookEntity<T extends GrapplehookEntity> extends Entity
         // draw rope
         if (segmenthandler == null) {
         	// if no segmenthandler, straight line from hand to hook
-    		drawSegment(new Vec(0,0,0), getRelativeToEntity(hookEntity, new Vec(hand_position), partialTicks), 1.0F, vertexbuffer, matrix4f1, matrix3f1, p_225623_6_);
+    		drawSegment(new Vec(0,0,0), getRelativeToEntity(hookEntity, new Vec(hand_position), partialTicks), 1.0F, vertexbuffer, matrix4f1, p_225623_6_);
         } else {
         	for (int i = 0; i < segmenthandler.segments.size() - 1; i++) {
         		Vec from = segmenthandler.segments.get(i);
@@ -255,7 +254,7 @@ public class RenderGrapplehookEntity<T extends GrapplehookEntity> extends Entity
 //        			taut = hookEntity.taut;
         		}
         		
-        		drawSegment(from, to, taut, vertexbuffer, matrix4f1, matrix3f1, p_225623_6_);
+        		drawSegment(from, to, taut, vertexbuffer, matrix4f1, p_225623_6_);
         	}
         }
         
@@ -303,19 +302,9 @@ public class RenderGrapplehookEntity<T extends GrapplehookEntity> extends Entity
     Vec getRelativeToEntity(GrapplehookEntity hookEntity, Vec inVec, float partialTicks) {
     	return inVec.sub(Vec.partialPositionVec(hookEntity, partialTicks));
     }
-    
-    // vertex for the hook
-    private static void vertex(VertexConsumer p_229106_0_, Matrix4f p_229106_1_, Matrix3f p_229106_2_, int p_229106_3_, float p_229106_4_, int p_229106_5_, int p_229106_6_, int p_229106_7_) {
-        p_229106_0_.addVertex(p_229106_1_, p_229106_4_ - 0.5F, (float)p_229106_5_ - 0.5F, 0.0F)
-				.setColor(255, 255, 255, 255)
-				.setUv((float)p_229106_6_, (float)p_229106_7_)
-				.setOverlay(OverlayTexture.NO_OVERLAY)
-				.setLight(p_229106_3_)
-				.setNormal(0.0F, 1.0F, 0.0F);
-     }
 
-    // draw a segment of the rope
-    public void drawSegment(Vec start, Vec finish, double taut, VertexConsumer vertexbuffer, Matrix4f matrix, Matrix3f matrix3, int p_225623_6_) {
+	// draw a segment of the rope
+    public void drawSegment(Vec start, Vec finish, double taut, VertexConsumer vertexbuffer, Matrix4f matrix, int p_225623_6_) {
     	if (start.sub(finish).length() < 0.05) {
     		return;
     	}
@@ -389,11 +378,11 @@ public class RenderGrapplehookEntity<T extends GrapplehookEntity> extends Entity
     }
 
     @Override
-    public boolean shouldRender(T p_225626_1_, Frustum p_225626_2_, double p_225626_3_, double p_225626_5_, double p_225626_7_) {
+    public boolean shouldRender(@NotNull T p_225626_1_, @NotNull Frustum p_225626_2_, double p_225626_3_, double p_225626_5_, double p_225626_7_) {
 		return true;
 	}
 
-	public ItemStack getStackToRender(T entityIn) {
+	public ItemStack getStackToRender() {
 		ItemStack stack = new ItemStack(this.item);
 		CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putBoolean("hook", true));
         return stack;
@@ -407,7 +396,7 @@ public class RenderGrapplehookEntity<T extends GrapplehookEntity> extends Entity
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
      */
 	@Override
-	public ResourceLocation getTextureLocation(T entity) {
+	public @NotNull ResourceLocation getTextureLocation(@NotNull T entity) {
         return HOOK_TEXTURES;
 	}
 }

@@ -18,6 +18,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,7 +63,7 @@ public class GuiModifier extends Screen {
 			this.category = category;
 		}
 		
-		public void onPress(Button p_onPress_1_) {
+		public void onPress(@NotNull Button p_onPress_1_) {
 			boolean unlocked = tileEnt.isUnlocked(category) || Minecraft.getInstance().player.isCreative();
 
 			if (unlocked) {
@@ -74,7 +75,7 @@ public class GuiModifier extends Screen {
 	}
 	
 	class PressBack implements OnPress {
-		public void onPress(Button p_onPress_1_) {
+		public void onPress(@NotNull Button p_onPress_1_) {
 			mainScreen();
 		}
 	}
@@ -91,9 +92,7 @@ public class GuiModifier extends Screen {
 						}
 						).pos(this.guiLeft + this.xSize - 50 - 10, this.guiTop + this.ySize - 20 - 10).size(50, 20).build());
 		this.addRenderableWidget(Button.builder(Component.literal(ClientProxyInterface.proxy.localize("grapplemodifier.helpbutton.desc")),button->
-						{
-							helpScreen();
-						}
+						helpScreen()
 						).pos(this.guiLeft + 10 + 75, this.guiTop + this.ySize - 20 - 10).size(50, 20).build());
 		int y = 0;
 		int x = 0;
@@ -116,7 +115,7 @@ public class GuiModifier extends Screen {
 		this.addRenderableWidget(new TextWidget(Component.literal(ClientProxyInterface.proxy.localize("grapplemodifier.apply.desc")), this.guiLeft + 10, this.guiTop + this.ySize - 20 - 10 - 10));
 	}
 
-	class BackgroundWidget extends AbstractWidget {
+	static class BackgroundWidget extends AbstractWidget {
 		public BackgroundWidget(int p_i232254_1_, int p_i232254_2_, int p_i232254_3_, int p_i232254_4_,
 				Component p_i232254_5_) {
 			super(p_i232254_1_, p_i232254_2_, p_i232254_3_, p_i232254_4_, p_i232254_5_);
@@ -137,7 +136,7 @@ public class GuiModifier extends Screen {
 
 
 		@Override
-		protected void updateWidgetNarration(NarrationElementOutput pNarrationElementOutput) {
+		protected void updateWidgetNarration(@NotNull NarrationElementOutput pNarrationElementOutput) {
 
 		}
 	}
@@ -152,7 +151,7 @@ public class GuiModifier extends Screen {
 		this.addRenderableWidget(new BackgroundWidget(this.guiLeft, this.guiTop, this.xSize, this.ySize));
 	}
 	
-	class TextWidget extends AbstractWidget {
+	static class TextWidget extends AbstractWidget {
 		public TextWidget(int p_i232254_1_, int p_i232254_2_, int p_i232254_3_, int p_i232254_4_,
 				Component p_i232254_5_) {
 			super(p_i232254_1_, p_i232254_2_, p_i232254_3_, p_i232254_4_, p_i232254_5_);
@@ -164,7 +163,7 @@ public class GuiModifier extends Screen {
 			this(x, y, 50, 15 * text.getString().split("\n").length + 5, text);
 		}
 		
-	   public void renderWidget(GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_) {
+	   public void renderWidget(@NotNull GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_) {
 	      Minecraft minecraft = Minecraft.getInstance();
 	      Font fontrenderer = minecraft.font;
 	      RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
@@ -180,7 +179,7 @@ public class GuiModifier extends Screen {
 	   }
 
 		@Override
-		protected void updateWidgetNarration(NarrationElementOutput pNarrationElementOutput) {
+		protected void updateWidgetNarration(@NotNull NarrationElementOutput pNarrationElementOutput) {
 
 		}
 	}
@@ -259,12 +258,12 @@ public class GuiModifier extends Screen {
 		}
 		
 		@Override
-		public void renderWidget(GuiGraphics p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_) {
+		public void renderWidget(@NotNull GuiGraphics p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_) {
 			super.renderWidget(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
 			
 			if (this.isHovered) {
 				String tooltiptext = tooltip.getString();
-				ArrayList<Component> lines = new ArrayList<Component>();
+				ArrayList<Component> lines = new ArrayList<>();
 				for (String line : tooltiptext.split("\n")) {
 					lines.add(Component.literal(line));
 				}
@@ -359,8 +358,7 @@ public class GuiModifier extends Screen {
 			
 			String desc = ClientProxyInterface.proxy.localize(this.customization.getDescription(option));
 			
-			if (this.customization.isOptionValid(option)) {
-			} else {
+			if (!this.customization.isOptionValid(option)) {
 				desc = ClientProxyInterface.proxy.localize("grapplemodifier.incompatability.desc") + "\n" + desc;
 				enabled = false;
 			}

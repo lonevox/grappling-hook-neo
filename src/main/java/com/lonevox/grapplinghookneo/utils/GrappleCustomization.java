@@ -9,6 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 
 import java.nio.ByteBuffer;
+import java.util.Objects;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
@@ -79,8 +80,8 @@ public class GrappleCustomization {
 		LIMITS ("limits"),
 		ROCKET ("rocket");
 		
-		private String nameUnlocalized;
-		private upgradeCategories(String name) {
+		private final String nameUnlocalized;
+		upgradeCategories(String name) {
 			this.nameUnlocalized = name;
 		}
 		
@@ -130,7 +131,7 @@ public class GrappleCustomization {
 			}
 			return null;
 		}
-	};
+	}
 	
 	public GrappleCustomization() {
 		this.setDefaults();
@@ -148,24 +149,26 @@ public class GrappleCustomization {
 	}
 	
 	public GrappleConfig.Config.GrapplingHook.Custom.BooleanCustomizationOption getBooleanConfig(String option) {
-		if (option.equals("phaserope")) {return GrappleConfig.getConf().grapplinghook.custom.rope.phaserope;}
-		else if (option.equals("motor")) {return GrappleConfig.getConf().grapplinghook.custom.motor.motor;}
-		else if (option.equals("motorwhencrouching")) {return GrappleConfig.getConf().grapplinghook.custom.motor.motorwhencrouching;}
-		else if (option.equals("motorwhennotcrouching")) {return GrappleConfig.getConf().grapplinghook.custom.motor.motorwhennotcrouching;}
-		else if (option.equals("smartmotor")) {return GrappleConfig.getConf().grapplinghook.custom.motor.smartmotor;}
-		else if (option.equals("enderstaff")) {return GrappleConfig.getConf().grapplinghook.custom.enderstaff.enderstaff;}
-		else if (option.equals("repel")) {return GrappleConfig.getConf().grapplinghook.custom.forcefield.repel;}
-		else if (option.equals("attract")) {return GrappleConfig.getConf().grapplinghook.custom.magnet.attract;}
-		else if (option.equals("doublehook")) {return GrappleConfig.getConf().grapplinghook.custom.doublehook.doublehook;}
-		else if (option.equals("smartdoublemotor")) {return GrappleConfig.getConf().grapplinghook.custom.doublehook.smartdoublemotor;}
-		else if (option.equals("motordampener")) {return GrappleConfig.getConf().grapplinghook.custom.motor.motordampener;}
-		else if (option.equals("reelin")) {return GrappleConfig.getConf().grapplinghook.custom.hookthrower.reelin;}
-		else if (option.equals("pullbackwards")) {return GrappleConfig.getConf().grapplinghook.custom.motor.pullbackwards;}
-		else if (option.equals("oneropepull")) {return GrappleConfig.getConf().grapplinghook.custom.doublehook.oneropepull;}
-		else if (option.equals("sticky")) {return GrappleConfig.getConf().grapplinghook.custom.rope.sticky;}
-		else if (option.equals("detachonkeyrelease")) {return GrappleConfig.getConf().grapplinghook.custom.hookthrower.detachonkeyrelease;}
-		else if (option.equals("rocket")) {return GrappleConfig.getConf().grapplinghook.custom.rocket.rocketenabled;}
-		return null;
+		return switch (option) {
+			case "phaserope" -> GrappleConfig.getConf().grapplinghook.custom.rope.phaserope;
+			case "motor" -> GrappleConfig.getConf().grapplinghook.custom.motor.motor;
+			case "motorwhencrouching" -> GrappleConfig.getConf().grapplinghook.custom.motor.motorwhencrouching;
+			case "motorwhennotcrouching" -> GrappleConfig.getConf().grapplinghook.custom.motor.motorwhennotcrouching;
+			case "smartmotor" -> GrappleConfig.getConf().grapplinghook.custom.motor.smartmotor;
+			case "enderstaff" -> GrappleConfig.getConf().grapplinghook.custom.enderstaff.enderstaff;
+			case "repel" -> GrappleConfig.getConf().grapplinghook.custom.forcefield.repel;
+			case "attract" -> GrappleConfig.getConf().grapplinghook.custom.magnet.attract;
+			case "doublehook" -> GrappleConfig.getConf().grapplinghook.custom.doublehook.doublehook;
+			case "smartdoublemotor" -> GrappleConfig.getConf().grapplinghook.custom.doublehook.smartdoublemotor;
+			case "motordampener" -> GrappleConfig.getConf().grapplinghook.custom.motor.motordampener;
+			case "reelin" -> GrappleConfig.getConf().grapplinghook.custom.hookthrower.reelin;
+			case "pullbackwards" -> GrappleConfig.getConf().grapplinghook.custom.motor.pullbackwards;
+			case "oneropepull" -> GrappleConfig.getConf().grapplinghook.custom.doublehook.oneropepull;
+			case "sticky" -> GrappleConfig.getConf().grapplinghook.custom.rope.sticky;
+			case "detachonkeyrelease" -> GrappleConfig.getConf().grapplinghook.custom.hookthrower.detachonkeyrelease;
+			case "rocket" -> GrappleConfig.getConf().grapplinghook.custom.rocket.rocketenabled;
+			default -> null;
+		};
 	}
 
 	public GrappleConfig.Config.GrapplingHook.Custom.DoubleCustomizationOption getDoubleConfig(String option) {
@@ -350,35 +353,35 @@ public class GrappleCustomization {
 	}
 	
 	public boolean isOptionValid(String option) {
-		if (option == "motormaxspeed" || option == "motoracceleration" || option == "motorwhencrouching" || option == "motorwhennotcrouching" || option == "smartmotor" || option == "motordampener" || option == "pullbackwards") {
+		if (Objects.equals(option, "motormaxspeed") || Objects.equals(option, "motoracceleration") || Objects.equals(option, "motorwhencrouching") || Objects.equals(option, "motorwhennotcrouching") || Objects.equals(option, "smartmotor") || Objects.equals(option, "motordampener") || Objects.equals(option, "pullbackwards")) {
 			return this.motor;
 		}
 		
-		if (option == "sticky") {
+		if (Objects.equals(option, "sticky")) {
 			return !this.phaserope;
 		}
 		
-		else if (option == "sneakingangle") {
+		else if (Objects.equals(option, "sneakingangle")) {
 			return this.doublehook && !this.reelin;
 		}
 		
-		else if (option == "repelforce") {
+		else if (Objects.equals(option, "repelforce")) {
 			return this.repel;
 		}
 		
-		else if (option == "attractradius") {
+		else if (Objects.equals(option, "attractradius")) {
 			return this.attract;
 		}
 		
-		else if (option == "angle") {
+		else if (Objects.equals(option, "angle")) {
 			return this.doublehook;
 		}
 		
-		else if (option == "smartdoublemotor" || option == "oneropepull") {
+		else if (Objects.equals(option, "smartdoublemotor") || Objects.equals(option, "oneropepull")) {
 			return this.doublehook && this.motor;
 		}
 		
-		else if (option == "rocket_active_time" || option == "rocket_refuel_ratio" || option == "rocket_force" || option == "rocket_vertical_angle") {
+		else if (Objects.equals(option, "rocket_active_time") || Objects.equals(option, "rocket_refuel_ratio") || Objects.equals(option, "rocket_force") || Objects.equals(option, "rocket_vertical_angle")) {
 			return this.rocket;
 		}
 		

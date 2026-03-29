@@ -2,7 +2,6 @@ package com.lonevox.grapplinghookneo;
 
 import com.lonevox.grapplinghookneo.common.CommonSetup;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,7 +19,7 @@ public class GrapplingHookNeo {
 
     public static final Logger LOGGER = LogManager.getLogger();
 
-    public GrapplingHookNeo(IEventBus bus, ModContainer modContainer) {
+    public GrapplingHookNeo(IEventBus bus) {
         CommonSetup.BLOCKS.register(bus);
         CommonSetup.ITEMS.register(bus);
         CommonSetup.ENTITY_TYPES.register(bus);

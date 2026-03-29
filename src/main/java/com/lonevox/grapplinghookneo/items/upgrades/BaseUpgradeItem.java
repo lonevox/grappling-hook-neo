@@ -3,9 +3,10 @@ package com.lonevox.grapplinghookneo.items.upgrades;
 import com.lonevox.grapplinghookneo.utils.GrappleCustomization;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class BaseUpgradeItem extends Item {
-	public GrappleCustomization.upgradeCategories category = null;
+	public GrappleCustomization.upgradeCategories category;
 	boolean craftingRemaining = false;
 
 	public BaseUpgradeItem(int maxStackSize, GrappleCustomization.upgradeCategories theCategory) {
@@ -23,7 +24,7 @@ public class BaseUpgradeItem extends Item {
 	}
 
 	@Override
-	public ItemStack getCraftingRemainingItem(ItemStack itemStack)
+	public @NotNull ItemStack getCraftingRemainingItem(@NotNull ItemStack itemStack)
     {
         if (!this.craftingRemaining)
         {

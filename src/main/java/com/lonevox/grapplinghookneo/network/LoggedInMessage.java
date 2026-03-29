@@ -8,6 +8,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
@@ -45,7 +46,7 @@ public class LoggedInMessage implements CustomPacketPayload {
                     int len = buf.readInt();
                     CharSequence charseq = buf.readCharSequence(len, Charset.defaultCharset());
                     field.set(theObject, charseq.toString());
-                } else if (field.getType() != null && Object.class.isAssignableFrom(field.getType())) {
+                } else if (Object.class.isAssignableFrom(field.getType())) {
                     Class<?> newClass = field.getType();
                     decodeClass(buf, (Class<Object>) newClass, newClass.cast(field.get(theObject)));
                 } else {
@@ -82,7 +83,7 @@ public class LoggedInMessage implements CustomPacketPayload {
                     String str = (String) field.get(theObject);
                     buf.writeInt(str.length());
                     buf.writeCharSequence(str.subSequence(0, str.length()), Charset.defaultCharset());
-                } else if (field.getType() != null && Object.class.isAssignableFrom(field.getType())) {
+                } else if (Object.class.isAssignableFrom(field.getType())) {
                     Class<?> newClass = field.getType();
                     encodeClass(buf, (Class<Object>) newClass, newClass.cast(field.get(theObject)));
                 } else {
@@ -105,7 +106,7 @@ public class LoggedInMessage implements CustomPacketPayload {
     }
 
     @Override
-    public CustomPacketPayload.Type<LoggedInMessage> type() {
+    public CustomPacketPayload.@NotNull Type<LoggedInMessage> type() {
         return TYPE;
     }
 }

@@ -23,20 +23,20 @@ public class SegmentHandler {
 	public Level world;
 	public GrapplehookEntity hookEntity;
 	
-	Vec prevHookPos = null;
-	Vec prevPlayerPos = null;;
+	Vec prevHookPos;
+	Vec prevPlayerPos;
 	
 	final double bendOffset = 0.05;
 	final double intoBlock = 0.05;
 	
 	public SegmentHandler(Level w, GrapplehookEntity hookEntity, Vec hookpos, Vec playerpos) {
-		segments = new LinkedList<Vec>();
+		segments = new LinkedList<>();
 		segments.add(hookpos);
 		segments.add(playerpos);
-		segmentBottomSides = new LinkedList<Direction>();
+		segmentBottomSides = new LinkedList<>();
 		segmentBottomSides.add(null);
 		segmentBottomSides.add(null);
-		segmentTopSides = new LinkedList<Direction>();
+		segmentTopSides = new LinkedList<>();
 		segmentTopSides.add(null);
 		segmentTopSides.add(null);
 		this.world = w;
@@ -96,7 +96,7 @@ public class SegmentHandler {
 			}
 		}
 		
-		Vec farthest = segments.get(1);
+		Vec farthest;
 		
 		if (movinghook) {
 			while (true) {
@@ -202,8 +202,7 @@ public class SegmentHandler {
                 			cornerside.getOpposite() == bottomside) {
                 		// this should not happen
 //                		System.out.println("Warning: corner is same or opposite of bottomside");
-                		continue;
-                	} else {
+					} else {
                 		// add a bend around the corner
                 		Vec actualcorner = cornerhitpos.add(bottomnormal.changeLen(intoBlock));
                 		Vec bend = actualcorner.add(bottomnormal.changeLen(bendOffset)).add(getNormal(cornerside).changeLen(bendOffset));
@@ -367,7 +366,6 @@ public class SegmentHandler {
 				maxvec.z = segpos.z;
 			}
 		}
-		AABB bb = new AABB(minvec.x, minvec.y, minvec.z, maxvec.x, maxvec.y, maxvec.z);
-		return bb;
+		return new AABB(minvec.x, minvec.y, minvec.z, maxvec.x, maxvec.y, maxvec.z);
 	}
 }

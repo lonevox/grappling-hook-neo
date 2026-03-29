@@ -27,12 +27,11 @@ public class GrapplemodUtils {
 				ClipContext.Block.COLLIDER,
 				ClipContext.Fluid.NONE,
 				CollisionContext.empty()));
-		if (result != null && result instanceof BlockHitResult) {
-			BlockHitResult blockhit = (BlockHitResult) result;
-			if (blockhit.getType() != HitResult.Type.BLOCK) {
+		if (result instanceof BlockHitResult blockHit) {
+			if (blockHit.getType() != HitResult.Type.BLOCK) {
 				return null;
 			}
-			return blockhit;
+			return blockHit;
 		}
 		return null;
 	}

@@ -2,7 +2,7 @@ package com.lonevox.grapplinghookneo.client;
 
 import com.lonevox.grapplinghookneo.common.CommonSetup;
 import com.lonevox.grapplinghookneo.config.GrappleConfig;
-import com.lonevox.grapplinghookneo.controllers.AirfrictionController;
+import com.lonevox.grapplinghookneo.controllers.AirFrictionController;
 import com.lonevox.grapplinghookneo.controllers.ForcefieldController;
 import com.lonevox.grapplinghookneo.controllers.GrappleController;
 import com.lonevox.grapplinghookneo.items.KeypressItem;
@@ -33,8 +33,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import java.util.UUID;
 
 public class ClientEventHandlers {
-	public static ClientEventHandlers instance = null;
-	
 	public ClientEventHandlers() {
 	    NeoForge.EVENT_BUS.register(this);
 	}
@@ -53,16 +51,16 @@ public class ClientEventHandlers {
 					boolean keys[] = {ClientSetup.key_enderlaunch.isDown(), ClientSetup.key_leftthrow.isDown(), ClientSetup.key_rightthrow.isDown(), ClientSetup.key_boththrow.isDown(), ClientSetup.key_rocket.isDown()};
 					
 					for (int i = 0; i < keys.length; i++) {
-						boolean iskeydown = keys[i];
-						boolean prevkey = prevKeys[i];
+						boolean isKeyDown = keys[i];
+						boolean prevKey = prevKeys[i];
 						
-						if (iskeydown != prevkey) {
+						if (isKeyDown != prevKey) {
 							KeypressItem.Keys key = KeypressItem.Keys.values()[i];
 							
 							ItemStack stack = getKeypressStack(player);
 							if (stack != null) {
 								if (!isLookingAtModifierBlock(player)) {
-									if (iskeydown) {
+									if (isKeyDown) {
 										((KeypressItem) stack.getItem()).onCustomKeyDown(stack, player, key, true);
 									} else {
 										((KeypressItem) stack.getItem()).onCustomKeyUp(stack, player, key, true);
@@ -71,7 +69,7 @@ public class ClientEventHandlers {
 							}
 						}
 						
-						prevKeys[i] = iskeydown;
+						prevKeys[i] = isKeyDown;
 					}
 				}
 			}
@@ -80,16 +78,14 @@ public class ClientEventHandlers {
 	
 	@SubscribeEvent
     public void onBlockBreak(BreakEvent event) {
-		if (event.getPos() != null) {
-			if (ClientControllerManager.controllerPos.containsKey(event.getPos())) {
-				GrappleController control = ClientControllerManager.controllerPos.get(event.getPos());
+		if (ClientControllerManager.controllerPos.containsKey(event.getPos())) {
+			GrappleController control = ClientControllerManager.controllerPos.get(event.getPos());
 
-				control.unattach();
-				
-				ClientControllerManager.controllerPos.remove(event.getPos());
-			}
+			control.unattach();
+
+			ClientControllerManager.controllerPos.remove(event.getPos());
 		}
-    }
+	}
 
 	@SubscribeEvent
 	public void onPlayerLoggedOutEvent(LoggingOut e) {
@@ -110,7 +106,7 @@ public class ClientEventHandlers {
 		
 		if (Minecraft.getInstance().options.keyJump.isDown()) {
 			if (controller != null) {
-				if (controller instanceof AirfrictionController && ((AirfrictionController) controller).wasSliding) {
+				if (controller instanceof AirFrictionController && ((AirFrictionController) controller).wasSliding) {
 					controller.slidingJump();
 				}
 			}
@@ -130,11 +126,11 @@ public class ClientEventHandlers {
 		if (ClientControllerManager.controllers.containsKey(id)) {
 			Input input = event.getInput();
 			GrappleController control = ClientControllerManager.controllers.get(id);
-			control.receivePlayerMovementMessage(input.leftImpulse, input.forwardImpulse, input.jumping, input.shiftKeyDown);
+			control.receivePlayerMovementMessage(input.leftImpulse, input.forwardImpulse, input.shiftKeyDown);
 			
 			boolean overrideMovement = true;
 			if (Minecraft.getInstance().player.onGround()) {
-				if (!(control instanceof AirfrictionController) && !(control instanceof ForcefieldController)) {
+				if (!(control instanceof AirFrictionController) && !(control instanceof ForcefieldController)) {
 					overrideMovement = false;
 				}
 			}
@@ -165,14 +161,12 @@ public class ClientEventHandlers {
 		int targetCameraTilt = 0;
 		if (ClientControllerManager.controllers.containsKey(id)) {
 			GrappleController controller = ClientControllerManager.controllers.get(id);
-			if (controller instanceof AirfrictionController) {
-				AirfrictionController afcontroller = (AirfrictionController) controller;
-				if (afcontroller.wasWallrunning) {
-					Vec walldirection = afcontroller.getWallDirection();
+			if (controller instanceof AirFrictionController airFrictionController) {
+				if (airFrictionController.wasWallrunning) {
+					Vec walldirection = airFrictionController.getWallDirection();
 					if (walldirection != null) {
 						Vec lookdirection = Vec.lookVec(player);
-						int dir = lookdirection.cross(walldirection).y > 0 ? 1 : -1;
-						targetCameraTilt = dir;
+						targetCameraTilt = lookdirection.cross(walldirection).y > 0 ? 1 : -1;
 					}
 				}
 			}
@@ -219,21 +213,17 @@ public class ClientEventHandlers {
 
 	public ItemStack getKeypressStack(Player player) {
 		if (player != null) {
-           ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
-           if (stack != null) {
-               Item item = stack.getItem();
-               if (item instanceof KeypressItem) {
-            	   return stack;
-               }
-           }
+            ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
+			Item mainHandItem = stack.getItem();
+			if (mainHandItem instanceof KeypressItem) {
+				return stack;
+			}
            
-           stack = player.getItemInHand(InteractionHand.OFF_HAND);
-           if (stack != null) {
-        	   Item item = stack.getItem();
-        	   if (item instanceof KeypressItem) {
-        		   return stack;
-        	   }
-           }
+            stack = player.getItemInHand(InteractionHand.OFF_HAND);
+			Item offHandItem = stack.getItem();
+			if (offHandItem instanceof KeypressItem) {
+				return stack;
+			}
 		}
 		return null;
 	}

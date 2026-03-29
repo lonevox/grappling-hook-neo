@@ -14,6 +14,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class ForcefieldItem extends Item {
 		super(new Item.Properties().stacksTo(1));
 	}
 	
-	public void doRightClick(ItemStack stack, Level worldIn, Player player) {
+	public void doRightClick(Level worldIn, Player player) {
 		if (worldIn.isClientSide) {
 			int playerid = player.getId();
 			GrappleController oldController = ClientProxyInterface.proxy.unregisterController(playerid);
@@ -33,16 +34,16 @@ public class ForcefieldItem extends Item {
 	}
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand hand) {
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level worldIn, Player playerIn, @NotNull InteractionHand hand) {
     	ItemStack stack = playerIn.getItemInHand(hand);
-        this.doRightClick(stack, worldIn, playerIn);
+        this.doRightClick(worldIn, playerIn);
         
     	return InteractionResultHolder.success(stack);
 	}
     
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void appendHoverText(ItemStack stack, Item.TooltipContext tooltipContext, List<Component> list, TooltipFlag par4) {
+	public void appendHoverText(@NotNull ItemStack stack, Item.@NotNull TooltipContext tooltipContext, List<Component> list, @NotNull TooltipFlag par4) {
 		list.add(Component.literal(ClientProxyInterface.proxy.localize("grappletooltip.repelleritem.desc")));
 		list.add(Component.literal(ClientProxyInterface.proxy.localize("grappletooltip.repelleritem2.desc")));
 		list.add(Component.literal(""));

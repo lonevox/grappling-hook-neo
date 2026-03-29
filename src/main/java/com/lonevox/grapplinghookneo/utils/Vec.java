@@ -49,11 +49,7 @@ public class Vec {
 	public Vec3 toVec3d() {
 		return new Vec3(this.x, this.y, this.z);
 	}
-	
-	public Vector3f toVector3f() {
-		return new Vector3f((float) this.x, (float) this.y, (float) this.z);
-	}
-	
+
 	public static Vec positionVec(Entity e) {
 		return new Vec(e.position());
 	}
@@ -172,11 +168,11 @@ public class Vec {
 	}
 	
 	public void print(){
-		System.out.println(this.toString());
+		System.out.println(this);
 	}
 	
 	public String toString() {
-		return "<" + Double.toString(this.x) + "," + Double.toString(this.y) + "," + Double.toString(this.z) + ">";
+		return "<" + this.x + "," + this.y + "," + this.z + ">";
 	}
 
 	public Vec add(double x, double y, double z) {

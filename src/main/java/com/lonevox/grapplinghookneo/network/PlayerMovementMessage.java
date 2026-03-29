@@ -9,6 +9,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jetbrains.annotations.NotNull;
 
 public class PlayerMovementMessage implements CustomPacketPayload {
     public static final Type<PlayerMovementMessage> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(GrapplingHookNeo.MODID, "player_movement"));
@@ -82,7 +83,7 @@ public class PlayerMovementMessage implements CustomPacketPayload {
     }
 
     @Override
-    public Type<PlayerMovementMessage> type() {
+    public @NotNull Type<PlayerMovementMessage> type() {
         return TYPE;
     }
 }

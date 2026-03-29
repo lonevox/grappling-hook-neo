@@ -142,11 +142,11 @@ public class ClientProxy extends ClientProxyInterface {
 		ItemStack stack = new ItemStack(CommonSetup.grapplingHookItem.get());
 		GrappleCustomization custom = new GrappleCustomization();
 		customizer.accept(custom);
-		CommonSetup.grapplingHookItem.get().setCustomOnServer(stack, custom, null);
+		CommonSetup.grapplingHookItem.get().setCustomOnServer(stack, custom);
 		return stack;
 	}
 	
-	public Screen onConfigScreen(Minecraft mc, Screen screen) {
+	public Screen onConfigScreen(Screen screen) {
 		return AutoConfig.getConfigScreen(GrappleConfig.class, screen).get();
 	}
 

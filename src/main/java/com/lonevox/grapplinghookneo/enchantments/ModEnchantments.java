@@ -58,7 +58,7 @@ public final class ModEnchantments {
         int level = 0;
         for (ItemStack stack : livingEntity.getArmorSlots()) {
             if (stack != null && !stack.isEmpty()) {
-                level = Math.max(level, EnchantmentHelper.getItemEnchantmentLevel(enchantmentHolder, stack));
+                level = Math.max(level, EnchantmentHelper.getTagEnchantmentLevel(enchantmentHolder, stack));
             }
         }
 

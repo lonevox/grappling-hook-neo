@@ -25,16 +25,14 @@ import net.minecraft.world.level.Level;
     along with GrappleMod.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class AirfrictionController extends GrappleController {
-	public double playerMovementMult = 0.5;
-	
+public class AirFrictionController extends GrappleController {
 	public int ignoreGroundCounter = 0;
 	public boolean wasSliding = false;
 	public boolean wasWallrunning = false;
 	public boolean wasRocket = false;
 	public boolean firstTickSinceCreated = true;
 	
-	public AirfrictionController(int grapplehookEntityId, int entityId, Level world, Vec pos, int id, GrappleCustomization custom) {
+	public AirFrictionController(int grapplehookEntityId, int entityId, Level world, Vec pos, int id, GrappleCustomization custom) {
 		super(grapplehookEntityId, entityId, world, pos, id, custom);
 	}
 	
@@ -147,9 +145,8 @@ public class AirfrictionController extends GrappleController {
 				}
 			}
 			
-			if (entity instanceof LivingEntity) {
-				LivingEntity entityliving = (LivingEntity) entity;
-				if (entityliving.isFallFlying()) {
+			if (entity instanceof LivingEntity livingEntity) {
+				if (livingEntity.isFallFlying()) {
 					this.unattach();
 				}
 			}

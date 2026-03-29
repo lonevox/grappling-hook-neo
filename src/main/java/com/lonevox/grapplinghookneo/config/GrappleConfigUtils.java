@@ -14,9 +14,9 @@ public class GrappleConfigUtils {
 	private static boolean anyBreakBlocks = false;
 
 	public static HashSet<Block> stringToBlocks(String s) {
-		HashSet<Block> blocks = new HashSet<Block>();
+		HashSet<Block> blocks = new HashSet<>();
 		
-		if (s.equals("") || s.equals("none") || s.equals("any")) {
+		if (s.isEmpty() || s.equals("none") || s.equals("any")) {
 			return blocks;
 		}
 		
@@ -45,9 +45,9 @@ public class GrappleConfigUtils {
 	
 	public static void updateGrapplingBlocks() {
 		String s = GrappleConfig.getConf().grapplinghook.blocks.grapplingBlocks;
-		if (s.equals("any") || s.equals("")) {
+		if (s.equals("any") || s.isEmpty()) {
 			s = GrappleConfig.getConf().grapplinghook.blocks.grapplingNonBlocks;
-			if (s.equals("none") || s.equals("")) {
+			if (s.equals("none") || s.isEmpty()) {
 				anyBlocks = true;
 			} else {
 				anyBlocks = false;
@@ -63,7 +63,7 @@ public class GrappleConfigUtils {
 		}
 		
 		grapplingBreaksBlocks = stringToBlocks(GrappleConfig.getConf().grapplinghook.blocks.grappleBreakBlocks);
-		anyBreakBlocks = grapplingBreaksBlocks.size() != 0;
+		anyBreakBlocks = !grapplingBreaksBlocks.isEmpty();
 		
 	}
 

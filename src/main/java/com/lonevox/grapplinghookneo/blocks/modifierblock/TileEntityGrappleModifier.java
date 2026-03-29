@@ -11,12 +11,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
 
 public class TileEntityGrappleModifier extends BlockEntity {
-	public HashMap<GrappleCustomization.upgradeCategories, Boolean> unlockedCategories = new HashMap<GrappleCustomization.upgradeCategories, Boolean>();
+	public HashMap<GrappleCustomization.upgradeCategories, Boolean> unlockedCategories = new HashMap<>();
 	public GrappleCustomization customization;
 
 	public TileEntityGrappleModifier(BlockPos pos, BlockState state) {
@@ -27,7 +28,9 @@ public class TileEntityGrappleModifier extends BlockEntity {
 	public void unlockCategory(upgradeCategories category) {
 		unlockedCategories.put(category, true);
 		this.sendUpdates();
-		this.getLevel().sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 3);
+		if (this.getLevel() != null) {
+			this.getLevel().sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 3);
+		}
 	}
 
 	public void setCustomizationClient(GrappleCustomization customization) {
@@ -50,7 +53,7 @@ public class TileEntityGrappleModifier extends BlockEntity {
 	}
 
 	@Override
-	protected void saveAdditional(CompoundTag nbtTagCompound, HolderLookup.Provider provider) {
+	protected void saveAdditional(@NotNull CompoundTag nbtTagCompound, HolderLookup.@NotNull Provider provider) {
 		super.saveAdditional(nbtTagCompound, provider);
 
 		CompoundTag unlockedNBT = nbtTagCompound.getCompound("unlocked");
@@ -67,7 +70,7 @@ public class TileEntityGrappleModifier extends BlockEntity {
 	}
 
 	@Override
-	protected void loadAdditional(CompoundTag parentNBTTagCompound, HolderLookup.Provider provider) {
+	protected void loadAdditional(@NotNull CompoundTag parentNBTTagCompound, HolderLookup.@NotNull Provider provider) {
 		super.loadAdditional(parentNBTTagCompound, provider);
 
 		CompoundTag unlockedNBT = parentNBTTagCompound.getCompound("unlocked");
@@ -99,7 +102,7 @@ public class TileEntityGrappleModifier extends BlockEntity {
 	/* Creates a tag containing all of the TileEntity information, used by vanilla to transmit from server to client
 	 */
 	@Override
-	public CompoundTag getUpdateTag(HolderLookup.Provider provider)
+	public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider provider)
 	{
 		CompoundTag nbtTagCompound = new CompoundTag();
 		this.saveAdditional(nbtTagCompound, provider);

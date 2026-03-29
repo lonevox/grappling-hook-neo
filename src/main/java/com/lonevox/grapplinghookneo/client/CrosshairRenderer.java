@@ -22,9 +22,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 public class CrosshairRenderer {
 	protected static final ResourceLocation GUI_ICONS_LOCATION = ResourceLocation.withDefaultNamespace("textures/gui/icons.png");
 	public Minecraft mc;
-	
-	float zLevel = -90.0F;
-	
+
 	public CrosshairRenderer() {
 	    NeoForge.EVENT_BUS.register(this);
 	    this.mc = Minecraft.getInstance();
@@ -32,12 +30,10 @@ public class CrosshairRenderer {
 	
 	@SubscribeEvent
 	public void onRenderGameOverlayPost(RenderGuiLayerEvent.Post event) {
-		PoseStack mStack = event.getGuiGraphics().pose();
-		
-        Options gamesettings = this.mc.options;
-        if (!gamesettings.getCameraType().isFirstPerson()) return;
-        if (this.mc.player.isSpectator()) return;
-        if (this.mc.getDebugOverlay().showDebugScreen() && !gamesettings.hideGui && !this.mc.player.isReducedDebugInfo() && !gamesettings.reducedDebugInfo().get()) return;
+		Options gameSettings = this.mc.options;
+        if (!gameSettings.getCameraType().isFirstPerson()) return;
+		if (this.mc.player != null && this.mc.player.isSpectator()) return;
+		if (this.mc.getDebugOverlay().showDebugScreen() && !gameSettings.hideGui && !this.mc.player.isReducedDebugInfo() && !gameSettings.reducedDebugInfo().get()) return;
 
 		if (VanillaGuiLayers.CROSSHAIR.equals(event.getName())) {
 			LocalPlayer player = this.mc.player;
@@ -49,7 +45,7 @@ public class CrosshairRenderer {
 			}
 			
 			if (grapplehookItemStack != null) {
-				GrappleCustomization custom = ((GrapplehookItem) CommonSetup.grapplingHookItem.get()).getCustomization(grapplehookItemStack);
+				GrappleCustomization custom = CommonSetup.grapplingHookItem.get().getCustomization(grapplehookItemStack);
             	double angle = Math.toRadians(custom.angle);
             	double verticalangle = Math.toRadians(custom.verticalthrowangle);
             	if (player.isCrouching()) {
@@ -65,7 +61,7 @@ public class CrosshairRenderer {
 	            int w = resolution.getGuiScaledWidth();
 	            int h = resolution.getGuiScaledHeight();
 
-            	double fov = Math.toRadians(gamesettings.fov().get());
+            	double fov = Math.toRadians(gameSettings.fov().get());
             	fov *= player.getFieldOfViewModifier();
             	double l = ((double) h/2) / Math.tan(fov/2);
             	

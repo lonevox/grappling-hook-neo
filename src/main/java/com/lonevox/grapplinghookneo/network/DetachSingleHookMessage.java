@@ -8,6 +8,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jetbrains.annotations.NotNull;
 
 public class DetachSingleHookMessage implements CustomPacketPayload {
     public static final Type<DetachSingleHookMessage> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(GrapplingHookNeo.MODID, "detach_single_hook"));
@@ -40,7 +41,7 @@ public class DetachSingleHookMessage implements CustomPacketPayload {
     }
 
     @Override
-    public Type<DetachSingleHookMessage> type() {
+    public @NotNull Type<DetachSingleHookMessage> type() {
         return TYPE;
     }
 }

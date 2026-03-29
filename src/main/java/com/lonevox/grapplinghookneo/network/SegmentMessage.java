@@ -14,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jetbrains.annotations.NotNull;
 
 public class SegmentMessage implements CustomPacketPayload {
     public static final Type<SegmentMessage> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(GrapplingHookNeo.MODID, "segment"));
@@ -81,7 +82,7 @@ public class SegmentMessage implements CustomPacketPayload {
     }
 
     @Override
-    public Type<SegmentMessage> type() {
+    public @NotNull Type<SegmentMessage> type() {
         return TYPE;
     }
 }

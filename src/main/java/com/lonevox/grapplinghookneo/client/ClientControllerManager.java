@@ -4,7 +4,7 @@ import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 
 import com.lonevox.grapplinghookneo.config.GrappleConfig;
-import com.lonevox.grapplinghookneo.controllers.AirfrictionController;
+import com.lonevox.grapplinghookneo.controllers.AirFrictionController;
 import com.lonevox.grapplinghookneo.controllers.ForcefieldController;
 import com.lonevox.grapplinghookneo.controllers.GrappleController;
 import com.lonevox.grapplinghookneo.enchantments.ModEnchantments;
@@ -36,13 +36,13 @@ import net.minecraft.world.phys.BlockHitResult;
 public class ClientControllerManager {
 	public static ClientControllerManager instance;
 
-	public static HashMap<Integer, GrappleController> controllers = new HashMap<Integer, GrappleController>();
+	public static HashMap<Integer, GrappleController> controllers = new HashMap<>();
 
 	public ClientControllerManager() {
 		instance = this;
 	}
 	
-	public HashMap<Integer, Long> enderLaunchTimer = new HashMap<Integer, Long>();
+	public HashMap<Integer, Long> enderLaunchTimer = new HashMap<>();
 	
 	public double rocketFuel = 1.0;
 	public double rocketIncreaseTick = 0.0;
@@ -169,9 +169,7 @@ public class ClientControllerManager {
 					BlockHitResult raytraceresult = GrapplemodUtils.rayTraceBlocks(entity.level(), Vec.positionVec(entity), Vec.positionVec(entity).add(new Vec(0, -1, 0)));
 					if (raytraceresult == null) {
 						double current_speed = Math.sqrt(Math.pow(motion.x, 2) + Math.pow(motion.z,  2));
-						if (current_speed >= GrappleConfig.getConf().enchantments.wallrun.wallrun_min_speed) {
-							return true;
-						}
+						return current_speed >= GrappleConfig.getConf().enchantments.wallrun.wallrun_min_speed;
 					}
 				}
 			}
@@ -200,12 +198,12 @@ public class ClientControllerManager {
 			if (ticksSinceLastOnGround > 3) {
 				if (!alreadyUsedDoubleJump) {
 					if (wearingDoubleJumpEnchant(player)) {
-						if (!controllers.containsKey(player.getId()) || controllers.get(player.getId()) instanceof AirfrictionController) {
+						if (!controllers.containsKey(player.getId()) || controllers.get(player.getId()) instanceof AirFrictionController) {
 							if (!controllers.containsKey(player.getId())) {
 								this.createControl(GrapplemodUtils.AIRID, -1, player.getId(), player.level(), new Vec(0,0,0), null, null);
 							}
 							GrappleController controller = controllers.get(player.getId());
-							if (controller instanceof AirfrictionController) {
+							if (controller instanceof AirFrictionController) {
 								alreadyUsedDoubleJump = true;
 								controller.doubleJump();
 							}
@@ -261,17 +259,14 @@ public class ClientControllerManager {
 				int id = entity.getId();
 				if (controllers.containsKey(id)) {
 					GrappleController controller = controllers.get(id);
-					if (controller instanceof AirfrictionController) {
-						AirfrictionController afc = (AirfrictionController) controller;
+					if (controller instanceof AirFrictionController afc) {
 						if (afc.wasSliding) {
 							was_sliding = true;
 						}
 					}
 				}
 				double speed = motion.removeAlong(new Vec (0,1,0)).length();
-				if (speed > GrappleConfig.getConf().enchantments.slide.sliding_end_min_speed && (was_sliding || speed > GrappleConfig.getConf().enchantments.slide.sliding_min_speed)) {
-					return true;
-				}
+				return speed > GrappleConfig.getConf().enchantments.slide.sliding_end_min_speed && (was_sliding || speed > GrappleConfig.getConf().enchantments.slide.sliding_min_speed);
 			}
 		}
 		
@@ -282,7 +277,7 @@ public class ClientControllerManager {
 	public GrappleController createControl(int controllerId, int grapplehookEntityId, int playerId, Level world, Vec pos, BlockPos blockPos, GrappleCustomization custom) {
 		GrapplehookEntity grapplehookEntity = null;
 		Entity grapplehookEntityUncast = world.getEntity(grapplehookEntityId);
-		if (grapplehookEntityUncast != null && grapplehookEntityUncast instanceof GrapplehookEntity) {
+		if (grapplehookEntityUncast instanceof GrapplehookEntity) {
 			grapplehookEntity = (GrapplehookEntity) grapplehookEntityUncast;
 		}
 		
@@ -292,10 +287,10 @@ public class ClientControllerManager {
 		if (currentcontroller != null && !(multi && currentcontroller.custom != null && currentcontroller.custom.doublehook)) {
 			currentcontroller.unattach();
 		}
-		
+
 //		System.out.println(blockpos);
 		
-		GrappleController control = null;
+		GrappleController control;
 		if (controllerId == GrapplemodUtils.GRAPPLEID) {
 			if (!multi) {
 				control = new GrappleController(grapplehookEntityId, playerId, world, pos, controllerId, custom);
@@ -303,12 +298,10 @@ public class ClientControllerManager {
 				control = controllers.get(playerId);
 				boolean created = false;
 				if (control != null && control.getClass().equals(GrappleController.class)) {
-					GrappleController c = (GrappleController) control;
 					if (control.custom.doublehook) {
-						if (grapplehookEntity != null && grapplehookEntity instanceof GrapplehookEntity) {
-							GrapplehookEntity multiHookEntity = grapplehookEntity;
+						if (grapplehookEntity instanceof GrapplehookEntity) {
 							created = true;
-							c.addHookEntity(multiHookEntity);
+							control.addHookEntity(grapplehookEntity);
 							return control;
 						}
 					}
@@ -320,15 +313,11 @@ public class ClientControllerManager {
 		} else if (controllerId == GrapplemodUtils.REPELID) {
 			control = new ForcefieldController(grapplehookEntityId, playerId, world, pos, controllerId);
 		} else if (controllerId == GrapplemodUtils.AIRID) {
-			control = new AirfrictionController(grapplehookEntityId, playerId, world, pos, controllerId, custom);
+			control = new AirFrictionController(grapplehookEntityId, playerId, world, pos, controllerId, custom);
 		} else {
 			return null;
 		}
-		
-		if (control == null) {
-			return null;
-		}
-		
+
 		if (blockPos != null) {
 			ClientControllerManager.controllerPos.put(blockPos, control);
 		}
@@ -336,9 +325,8 @@ public class ClientControllerManager {
 		registerController(playerId, control);
 		
 		Entity e = world.getEntity(playerId);
-		if (e != null && e instanceof LocalPlayer) {
-			LocalPlayer p = (LocalPlayer) e;
-			control.receivePlayerMovementMessage(p.input.leftImpulse, p.input.forwardImpulse, p.input.jumping, p.input.shiftKeyDown);
+		if (e instanceof LocalPlayer p) {
+			control.receivePlayerMovementMessage(p.input.leftImpulse, p.input.forwardImpulse, p.input.shiftKeyDown);
 		}
 		
 		return control;
@@ -459,7 +447,7 @@ public class ClientControllerManager {
 		Minecraft.getInstance().getSoundManager().play(sound);
 	}
 
-	public static HashMap<BlockPos, GrappleController> controllerPos = new HashMap<BlockPos, GrappleController>();
+	public static HashMap<BlockPos, GrappleController> controllerPos = new HashMap<>();
 	
 	public static long prevRopeJumpTime = 0;
 }

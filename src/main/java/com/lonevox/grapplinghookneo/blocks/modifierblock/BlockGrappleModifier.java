@@ -36,6 +36,7 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ public class BlockGrappleModifier extends BaseEntityBlock {
 	public static final MapCodec<BlockGrappleModifier> CODEC = simpleCodec(BlockGrappleModifier::new);
 
 	@Override
-	public MapCodec<BlockGrappleModifier> codec() {
+	public @NotNull MapCodec<BlockGrappleModifier> codec() {
 		return CODEC;
 	}
 
@@ -60,24 +61,23 @@ public class BlockGrappleModifier extends BaseEntityBlock {
 
 	@Nullable
 	@Override
-	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+	public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
 		return new TileEntityGrappleModifier(pos,state);
 	}
 
 
 
 	@Override
-	public List<ItemStack> getDrops(BlockState state, LootParams.Builder lootctx) {
-		List<ItemStack> drops = new ArrayList<ItemStack>();
+	public @NotNull List<ItemStack> getDrops(@NotNull BlockState state, LootParams.Builder lootctx) {
+		List<ItemStack> drops = new ArrayList<>();
 		drops.add(new ItemStack(this.asItem()));
 		BlockEntity ent = lootctx.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
-		if (ent == null || !(ent instanceof TileEntityGrappleModifier)) {
+		if (!(ent instanceof TileEntityGrappleModifier timeEntity)) {
 			return drops;
 		}
-		TileEntityGrappleModifier tileent = (TileEntityGrappleModifier) ent;
-		
+
 		for (GrappleCustomization.upgradeCategories category : GrappleCustomization.upgradeCategories.values()) {
-			if (tileent.unlockedCategories.containsKey(category) && tileent.unlockedCategories.get(category)) {
+			if (timeEntity.unlockedCategories.containsKey(category) && timeEntity.unlockedCategories.get(category)) {
 				drops.add(new ItemStack(category.getItem()));
 			}
 		}
@@ -85,7 +85,7 @@ public class BlockGrappleModifier extends BaseEntityBlock {
 	}
 	
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack helditemstack, BlockState state, Level worldIn, BlockPos pos, Player playerIn, InteractionHand hand, BlockHitResult raytraceresult) {
+    protected @NotNull ItemInteractionResult useItemOn(ItemStack helditemstack, @NotNull BlockState state, @NotNull Level worldIn, @NotNull BlockPos pos, @NotNull Player playerIn, @NotNull InteractionHand hand, @NotNull BlockHitResult blockHitResult) {
 		Item helditem = helditemstack.getItem();
 
 		if (helditem instanceof BaseUpgradeItem) {
@@ -114,7 +114,7 @@ public class BlockGrappleModifier extends BaseEntityBlock {
 				TileEntityGrappleModifier tileent = (TileEntityGrappleModifier) ent;
 				
 				GrappleCustomization custom = tileent.customization;
-				CommonSetup.grapplingHookItem.get().setCustomOnServer(helditemstack, custom, playerIn);
+				CommonSetup.grapplingHookItem.get().setCustomOnServer(helditemstack, custom);
 				
 				playerIn.sendSystemMessage(Component.literal("Applied configuration"));
 			}
@@ -126,7 +126,7 @@ public class BlockGrappleModifier extends BaseEntityBlock {
 						Holder<Enchantment> featherFalling = worldIn.registryAccess()
 								.lookupOrThrow(Registries.ENCHANTMENT)
 								.getOrThrow(Enchantments.FEATHER_FALLING);
-						int featherFallingLevel = EnchantmentHelper.getItemEnchantmentLevel(featherFalling, helditemstack);
+						int featherFallingLevel = EnchantmentHelper.getTagEnchantmentLevel(featherFalling, helditemstack);
 						if (featherFallingLevel >= 4) {
 							ItemStack newitemstack = new ItemStack(CommonSetup.longFallBootsItem.get());
 							newitemstack.set(DataComponents.ENCHANTMENTS, helditemstack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY));
@@ -142,7 +142,7 @@ public class BlockGrappleModifier extends BaseEntityBlock {
 				}
 			}
 		} else if (helditem == Items.DIAMOND) {
-			this.easterEgg(state, worldIn, pos, playerIn, hand, raytraceresult);
+			this.easterEgg(worldIn, pos, playerIn);
 		} else {
 			if (worldIn.isClientSide) {
 				BlockEntity ent = worldIn.getBlockEntity(pos);
@@ -155,7 +155,7 @@ public class BlockGrappleModifier extends BaseEntityBlock {
 	}
 
 	@Override
-	protected InteractionResult useWithoutItem(BlockState state, Level worldIn, BlockPos pos, Player playerIn, BlockHitResult raytraceresult) {
+	protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, Level worldIn, @NotNull BlockPos pos, @NotNull Player playerIn, @NotNull BlockHitResult blockHitResult) {
 		if (worldIn.isClientSide) {
 			BlockEntity ent = worldIn.getBlockEntity(pos);
 			if (ent instanceof TileEntityGrappleModifier tileent) {
@@ -166,27 +166,23 @@ public class BlockGrappleModifier extends BaseEntityBlock {
 	}
     
     @Override
-    public RenderShape getRenderShape(BlockState pState) {
+    public @NotNull RenderShape getRenderShape(@NotNull BlockState pState) {
         return RenderShape.MODEL;
     }
 
-	public void easterEgg(BlockState state, Level worldIn, BlockPos pos, Player playerIn, InteractionHand hand,
-			BlockHitResult raytraceresult) {
+	public void easterEgg(Level worldIn, BlockPos pos, Player playerIn) {
 		int spacing = 3;
 		Vec[] positions = new Vec[] {new Vec(-spacing*2, 0, 0), new Vec(-spacing, 0, 0), new Vec(0, 0, 0), new Vec(spacing, 0, 0), new Vec(2*spacing, 0, 0)};
-		int[] colors = new int[] {0x5bcffa, 0xf5abb9, 0xffffff, 0xf5abb9, 0x5bcffa};
-		
-		for (int i = 0; i < positions.length; i++) {
+
+		for (Vec position : positions) {
 			Vec newpos = new Vec(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5);
 			Vec toPlayer = Vec.positionVec(playerIn).sub(newpos);
 			double angle = toPlayer.length() == 0 ? 0 : toPlayer.getYaw();
-			newpos = newpos.add(positions[i].rotateYaw(Math.toRadians(angle)));
-			
-	        ItemStack stack = new ItemStack(Items.FIREWORK_ROCKET);
+			newpos = newpos.add(position.rotateYaw(Math.toRadians(angle)));
+
+			ItemStack stack = new ItemStack(Items.FIREWORK_ROCKET);
 			FireworkRocketEntity firework = new FireworkRocketEntity(worldIn, playerIn, newpos.x, newpos.y, newpos.z, stack);
 			worldIn.addFreshEntity(firework);
 		}
 	}
-
-
 }

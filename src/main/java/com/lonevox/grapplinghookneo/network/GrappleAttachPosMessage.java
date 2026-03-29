@@ -11,6 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jetbrains.annotations.NotNull;
 
 public class GrappleAttachPosMessage implements CustomPacketPayload {
     public static final Type<GrappleAttachPosMessage> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(GrapplingHookNeo.MODID, "grapple_attach_pos"));
@@ -58,7 +59,7 @@ public class GrappleAttachPosMessage implements CustomPacketPayload {
     }
 
     @Override
-    public Type<GrappleAttachPosMessage> type() {
+    public @NotNull Type<GrappleAttachPosMessage> type() {
         return TYPE;
     }
 }

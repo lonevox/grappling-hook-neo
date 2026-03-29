@@ -30,6 +30,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -53,8 +54,8 @@ import java.util.List;
  */
 
 public class GrapplehookItem extends Item implements KeypressItem {
-	public static HashMap<Entity, GrapplehookEntity> grapplehookEntitiesLeft = new HashMap<Entity, GrapplehookEntity>();
-	public static HashMap<Entity, GrapplehookEntity> grapplehookEntitiesRight = new HashMap<Entity, GrapplehookEntity>();
+	public static HashMap<Entity, GrapplehookEntity> grapplehookEntitiesLeft = new HashMap<>();
+	public static HashMap<Entity, GrapplehookEntity> grapplehookEntitiesRight = new HashMap<>();
 	
 	public GrapplehookItem() {
 		super(new Item.Properties().stacksTo(1).durability(GrappleConfig.getConf().grapplinghook.other.default_durability));
@@ -92,24 +93,20 @@ public class GrapplehookItem extends Item implements KeypressItem {
 	}
 
 	@Override
-	public boolean isValidRepairItem(ItemStack stack, ItemStack repair) {
+	public boolean isValidRepairItem(@NotNull ItemStack stack, @NotNull ItemStack repair) {
         if (repair != null && repair.getItem().equals(Items.LEATHER)) return true;
         return super.isValidRepairItem(stack, repair);
 	}
 
 
 	@Override
-    public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
+    public boolean onLeftClickEntity(@NotNull ItemStack stack, @NotNull Player player, @NotNull Entity entity) {
     	return true;
     }
-    
-	public boolean onBlockStartBreak(ItemStack itemstack, BlockPos pos, Player player) {
-		return true;
-	}
-	
+
 	@Override
-	public boolean canAttackBlock(BlockState p_195938_1_, Level p_195938_2_, BlockPos p_195938_3_,
-			Player p_195938_4_) {
+	public boolean canAttackBlock(@NotNull BlockState p_195938_1_, @NotNull Level p_195938_2_, @NotNull BlockPos p_195938_3_,
+	                              @NotNull Player p_195938_4_) {
 		return false;
 	}
 
@@ -146,10 +143,10 @@ public class GrapplehookItem extends Item implements KeypressItem {
 					return;
 				}
 				
-				boolean threw = throwLeft(stack, player.level(), player, ismainhand);
+				boolean threw = throwLeft(stack, player.level(), player);
 
 				if (threw) {
-			        player.level().playSound((Player) null, player.position().x, player.position().y, player.position().z, SoundEvents.ARROW_SHOOT, SoundSource.NEUTRAL, 1.0F, 1.0F / (player.getRandom().nextFloat() * 0.4F + 1.2F) + 2.0F * 0.5F);
+			        player.level().playSound(null, player.position().x, player.position().y, player.position().z, SoundEvents.ARROW_SHOOT, SoundSource.NEUTRAL, 1.0F, 1.0F / (player.getRandom().nextFloat() * 0.4F + 1.2F) + 2.0F * 0.5F);
 				}
 			} else if (key == KeypressItem.Keys.THROWRIGHT) {
 				GrapplehookEntity hookRight = getHookEntityRight(player);
@@ -166,7 +163,7 @@ public class GrapplehookItem extends Item implements KeypressItem {
 				
 				throwRight(stack, player.level(), player, ismainhand);
 
-		        player.level().playSound((Player) null, player.position().x, player.position().y, player.position().z, SoundEvents.ARROW_SHOOT, SoundSource.NEUTRAL, 1.0F, 1.0F / (player.getRandom().nextFloat() * 0.4F + 1.2F) + 2.0F * 0.5F);
+		        player.level().playSound(null, player.position().x, player.position().y, player.position().z, SoundEvents.ARROW_SHOOT, SoundSource.NEUTRAL, 1.0F, 1.0F / (player.getRandom().nextFloat() * 0.4F + 1.2F) + 2.0F * 0.5F);
 			}
 		}
 	}
@@ -218,14 +215,14 @@ public class GrapplehookItem extends Item implements KeypressItem {
   		}
 
     	if (!(!custom.doublehook || angle == 0)) {
-    		throwLeft(stack, worldIn, entityLiving, righthand);
+    		throwLeft(stack, worldIn, entityLiving);
     	}
 		throwRight(stack, worldIn, entityLiving, righthand);
 
-		entityLiving.level().playSound((Player) null, entityLiving.position().x, entityLiving.position().y, entityLiving.position().z, SoundEvents.ARROW_SHOOT, SoundSource.NEUTRAL, 1.0F, 1.0F / (worldIn.random.nextFloat() * 0.4F + 1.2F) + 2.0F * 0.5F);
+		entityLiving.level().playSound(null, entityLiving.position().x, entityLiving.position().y, entityLiving.position().z, SoundEvents.ARROW_SHOOT, SoundSource.NEUTRAL, 1.0F, 1.0F / (worldIn.random.nextFloat() * 0.4F + 1.2F) + 2.0F * 0.5F);
 	}
 	
-	public boolean throwLeft(ItemStack stack, Level worldIn, LivingEntity entityLiving, boolean righthand) {
+	public boolean throwLeft(ItemStack stack, Level worldIn, LivingEntity entityLiving) {
     	GrappleCustomization custom = this.getCustomization(stack);
     	
   		double angle = custom.angle;
@@ -235,19 +232,17 @@ public class GrapplehookItem extends Item implements KeypressItem {
   			angle = custom.sneakingangle;
   			verticalangle = custom.sneakingverticalthrowangle;
   		}
-  		
-  		LivingEntity player = entityLiving;
-  		
-  		Vec anglevec = Vec.fromAngles(Math.toRadians(-angle), Math.toRadians(verticalangle));
-  		anglevec = anglevec.rotatePitch(Math.toRadians(-player.getViewXRot(1.0F)));
-  		anglevec = anglevec.rotateYaw(Math.toRadians(player.getViewYRot(1.0F)));
+
+		Vec anglevec = Vec.fromAngles(Math.toRadians(-angle), Math.toRadians(verticalangle));
+  		anglevec = anglevec.rotatePitch(Math.toRadians(-entityLiving.getViewXRot(1.0F)));
+  		anglevec = anglevec.rotateYaw(Math.toRadians(entityLiving.getViewYRot(1.0F)));
         float velx = -Mth.sin((float) anglevec.getYaw() * 0.017453292F) * Mth.cos((float) anglevec.getPitch() * 0.017453292F);
         float vely = -Mth.sin((float) anglevec.getPitch() * 0.017453292F);
         float velz = Mth.cos((float) anglevec.getYaw() * 0.017453292F) * Mth.cos((float) anglevec.getPitch() * 0.017453292F);
 		GrapplehookEntity hookEntity = this.createGrapplehookEntity(stack, worldIn, entityLiving, false, true);
         float extravelocity = (float) Vec.motionVec(entityLiving).distAlong(new Vec(velx, vely, velz));
         if (extravelocity < 0) { extravelocity = 0; }
-        hookEntity.shoot((double) velx, (double) vely, (double) velz, hookEntity.getVelocity() + extravelocity, 0.0F);
+        hookEntity.shoot(velx, vely, velz, hookEntity.getVelocity() + extravelocity, 0.0F);
         
 		worldIn.addFreshEntity(hookEntity);
 		setHookEntityLeft(entityLiving, hookEntity);    			
@@ -275,22 +270,20 @@ public class GrapplehookItem extends Item implements KeypressItem {
 	        float velz = Mth.cos((float) anglevec.getYaw() * 0.017453292F) * Mth.cos((float) anglevec.getPitch() * 0.017453292F);
 	        float extravelocity = (float) Vec.motionVec(entityLiving).distAlong(new Vec(velx, vely, velz));
 	        if (extravelocity < 0) { extravelocity = 0; }
-	        hookEntity.shoot((double) velx, (double) vely, (double) velz, hookEntity.getVelocity() + extravelocity, 0.0F);
+	        hookEntity.shoot(velx, vely, velz, hookEntity.getVelocity() + extravelocity, 0.0F);
 			setHookEntityRight(entityLiving, hookEntity);
 			worldIn.addFreshEntity(hookEntity);
     	} else {
-      		LivingEntity player = entityLiving;
-      		
-      		Vec anglevec = Vec.fromAngles(Math.toRadians(angle), Math.toRadians(verticalangle));
-      		anglevec = anglevec.rotatePitch(Math.toRadians(-player.getViewXRot(1.0F)));
-      		anglevec = anglevec.rotateYaw(Math.toRadians(player.getViewYRot(1.0F)));
+			Vec anglevec = Vec.fromAngles(Math.toRadians(angle), Math.toRadians(verticalangle));
+      		anglevec = anglevec.rotatePitch(Math.toRadians(-entityLiving.getViewXRot(1.0F)));
+      		anglevec = anglevec.rotateYaw(Math.toRadians(entityLiving.getViewYRot(1.0F)));
 	        float velx = -Mth.sin((float) anglevec.getYaw() * 0.017453292F) * Mth.cos((float) anglevec.getPitch() * 0.017453292F);
 	        float vely = -Mth.sin((float) anglevec.getPitch() * 0.017453292F);
 	        float velz = Mth.cos((float) anglevec.getYaw() * 0.017453292F) * Mth.cos((float) anglevec.getPitch() * 0.017453292F);
 			GrapplehookEntity hookEntity = this.createGrapplehookEntity(stack, worldIn, entityLiving, true, true);
 	        float extravelocity = (float) Vec.motionVec(entityLiving).distAlong(new Vec(velx, vely, velz));
 	        if (extravelocity < 0) { extravelocity = 0; }
-	        hookEntity.shoot((double) velx, (double) vely, (double) velz, hookEntity.getVelocity() + extravelocity, 0.0F);
+	        hookEntity.shoot(velx, vely, velz, hookEntity.getVelocity() + extravelocity, 0.0F);
             
 			worldIn.addFreshEntity(hookEntity);
 			setHookEntityRight(entityLiving, hookEntity);
@@ -314,9 +307,7 @@ public class GrapplehookItem extends Item implements KeypressItem {
 		int id = entityLiving.getId();
 		GrapplemodUtils.sendToCorrectClient(new GrappleDetachMessage(id), entityLiving.getId(), entityLiving.level());
 
-		if (ServerControllerManager.attached.contains(id)) {
-			ServerControllerManager.attached.remove(id);
-		}
+		ServerControllerManager.attached.remove(id);
 	}
 	
 	public void detachLeft(LivingEntity entityLiving) {
@@ -336,10 +327,8 @@ public class GrapplehookItem extends Item implements KeypressItem {
 		} else {
 			GrapplemodUtils.sendToCorrectClient(new DetachSingleHookMessage(id, hookLeft.getId()), id, entityLiving.level());
 		}
-		
-		if (ServerControllerManager.attached.contains(id)) {
-			ServerControllerManager.attached.remove(id);
-		}
+
+		ServerControllerManager.attached.remove(id);
 	}
 	
 	public void detachRight(LivingEntity entityLiving) {
@@ -359,10 +348,8 @@ public class GrapplehookItem extends Item implements KeypressItem {
 		} else {
 			GrapplemodUtils.sendToCorrectClient(new DetachSingleHookMessage(id, hookRight.getId()), id, entityLiving.level());
 		}
-		
-		if (ServerControllerManager.attached.contains(id)) {
-			ServerControllerManager.attached.remove(id);
-		}
+
+		ServerControllerManager.attached.remove(id);
 	}
 	
     public double getAngle(LivingEntity entity, ItemStack stack) {
@@ -413,7 +400,7 @@ public class GrapplehookItem extends Item implements KeypressItem {
     
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void appendHoverText(ItemStack stack, Item.TooltipContext tooltipContext, List<Component> list, TooltipFlag par4) {
+	public void appendHoverText(@NotNull ItemStack stack, Item.@NotNull TooltipContext tooltipContext, @NotNull List<Component> list, @NotNull TooltipFlag par4) {
 		GrappleCustomization custom = getCustomization(stack);
 		
 		if (Screen.hasShiftDown()) {
@@ -508,7 +495,7 @@ public class GrapplehookItem extends Item implements KeypressItem {
 		}
 	}
 
-	public void setCustomOnServer(ItemStack helditemstack, GrappleCustomization custom, Player player) {
+	public void setCustomOnServer(ItemStack helditemstack, GrappleCustomization custom) {
 		CompoundTag tag = getCustomDataTag(helditemstack);
 		CompoundTag nbt = custom.writeNBT();
 		
@@ -519,14 +506,12 @@ public class GrapplehookItem extends Item implements KeypressItem {
 
 	
 	@Override
-	public boolean onDroppedByPlayer(ItemStack item, Player player) {
+	public boolean onDroppedByPlayer(@NotNull ItemStack item, Player player) {
 		int id = player.getId();
 		GrapplemodUtils.sendToCorrectClient(new GrappleDetachMessage(id), id, player.level());
 		
 		if (!player.level().isClientSide) {
-			if (ServerControllerManager.attached.contains(id)) {
-				ServerControllerManager.attached.remove(id);
-			}
+			ServerControllerManager.attached.remove(id);
 		}
 		
 		if (grapplehookEntitiesLeft.containsKey(player)) {
@@ -548,32 +533,32 @@ public class GrapplehookItem extends Item implements KeypressItem {
 		return super.onDroppedByPlayer(item, player);
 	}
 	
-	public boolean getPropertyRocket(ItemStack stack, Level world, LivingEntity entity) {
+	public boolean getPropertyRocket(ItemStack stack) {
 		return this.getCustomization(stack).rocket;
 	}
 
-	public boolean getPropertyDouble(ItemStack stack, Level world, LivingEntity entity) {
+	public boolean getPropertyDouble(ItemStack stack) {
 		return this.getCustomization(stack).doublehook;
 	}
 
-	public boolean getPropertyMotor(ItemStack stack, Level world, LivingEntity entity) {
+	public boolean getPropertyMotor(ItemStack stack) {
 		return this.getCustomization(stack).motor;
 	}
 
-	public boolean getPropertySmart(ItemStack stack, Level world, LivingEntity entity) {
+	public boolean getPropertySmart(ItemStack stack) {
 		return this.getCustomization(stack).smartmotor;
 	}
 
-	public boolean getPropertyEnderstaff(ItemStack stack, Level world, LivingEntity entity) {
+	public boolean getPropertyEnderstaff(ItemStack stack) {
 		return this.getCustomization(stack).enderstaff;
 	}
 
-	public boolean getPropertyMagnet(ItemStack stack, Level world, LivingEntity entity) {
+	public boolean getPropertyMagnet(ItemStack stack) {
 		return this.getCustomization(stack).attract || this.getCustomization(stack).repel;
 	}
 
 
-	public boolean getPropertyHook(ItemStack stack, Level world, LivingEntity entity) {
+	public boolean getPropertyHook(ItemStack stack) {
     	CompoundTag tag = getCustomDataTag(stack);
     	return tag.contains("hook");
 	}

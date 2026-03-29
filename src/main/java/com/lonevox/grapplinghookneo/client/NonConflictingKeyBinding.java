@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.neoforged.neoforge.client.settings.IKeyConflictContext;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
+import org.jetbrains.annotations.NotNull;
 
 public class NonConflictingKeyBinding extends KeyMapping {
 	public NonConflictingKeyBinding(String description, int keyCode, String category) {
@@ -19,7 +20,7 @@ public class NonConflictingKeyBinding extends KeyMapping {
 				return true;
 			}
 			@Override
-			public boolean conflicts(IKeyConflictContext other) {
+			public boolean conflicts(@NotNull IKeyConflictContext other) {
 				// Must conflict with IN_GAME so NONE-modifier keybinds stay active
 				// while Shift/Ctrl/Alt are held (NeoForge KeyModifier.NONE behavior).
 				return other == KeyConflictContext.IN_GAME;
@@ -32,7 +33,7 @@ public class NonConflictingKeyBinding extends KeyMapping {
 		this.setNonConflict();
 	}
 
-   public boolean same(KeyMapping p_197983_1_) {
+   public boolean same(@NotNull KeyMapping p_197983_1_) {
 	   return false;
    }
    

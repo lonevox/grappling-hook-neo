@@ -10,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 
@@ -48,16 +49,13 @@ public class GrappleEndMessage implements CustomPacketPayload {
 
     public static void handle(GrappleEndMessage message, IPayloadContext context) {
         ServerPlayer player = (ServerPlayer) context.player();
-        if (player == null) {
-            return;
-        }
-        Level w = player.level();
+		Level w = player.level();
 
         ServerControllerManager.receiveGrappleEnd(message.entityId, w, message.hookEntityIds);
     }
 
     @Override
-    public Type<GrappleEndMessage> type() {
+    public @NotNull Type<GrappleEndMessage> type() {
         return TYPE;
     }
 }
