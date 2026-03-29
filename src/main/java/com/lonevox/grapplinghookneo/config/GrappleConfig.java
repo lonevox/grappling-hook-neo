@@ -285,9 +285,6 @@ public class GrappleConfig implements ConfigData {
 				public double wallrun_drag = 0.01;
 				@Tooltip
 				public double wallrun_min_speed = 0;
-				@BoundedDiscrete(max=3, min=0)
-				@Tooltip
-				public int enchant_rarity_wallrun = 0;
 			}
 			
 			@ConfigEntry.Gui.CollapsibleObject
@@ -300,9 +297,6 @@ public class GrappleConfig implements ConfigData {
 				public boolean doublejump_relative_to_falling = false;
 				@Tooltip
 				public double dont_doublejump_if_falling_faster_than = 99999999.0;
-				@BoundedDiscrete(max=3, min=0)
-				@Tooltip
-				public int enchant_rarity_double_jump = 0;
 			}
 			
 			@ConfigEntry.Gui.CollapsibleObject
@@ -317,9 +311,6 @@ public class GrappleConfig implements ConfigData {
 				public double sliding_min_speed = 0.15;
 				@Tooltip
 				public double sliding_end_min_speed = 0.01;
-				@BoundedDiscrete(max=3, min=0)
-				@Tooltip
-				public int enchant_rarity_sliding = 0;
 			}
 		}
 		
