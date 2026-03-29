@@ -50,7 +50,6 @@ runs {
 }
 
 repositories {
-    maven { url 'https://maven.shedaniel.me/' }
     mavenLocal()
 }
 
@@ -60,7 +59,6 @@ configurations {
 
 dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
-    implementation "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
 }
 
 tasks.withType(ProcessResources).configureEach {
@@ -74,8 +72,7 @@ tasks.withType(ProcessResources).configureEach {
         mod_license            : mod_license,
         mod_version            : mod_version,
         mod_authors            : mod_authors,
-        mod_description        : mod_description,
-        cloth_config_version_range: cloth_config_version_range
+        mod_description        : mod_description
     ]
     inputs.properties replaceProperties
     filesMatching(['META-INF/neoforge.mods.toml']) {

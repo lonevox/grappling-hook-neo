@@ -8,8 +8,6 @@ import com.lonevox.grapplinghookneo.network.GrappleDetachMessage;
 import com.lonevox.grapplinghookneo.network.LoggedInMessage;
 import com.lonevox.grapplinghookneo.server.ServerControllerManager;
 import com.lonevox.grapplinghookneo.utils.GrapplemodUtils;
-import me.shedaniel.autoconfig.AutoConfig;
-import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
@@ -30,7 +28,6 @@ import java.util.HashSet;
 public class CommonEventHandlers {
     public CommonEventHandlers() {
         NeoForge.EVENT_BUS.register(this);
-        AutoConfig.register(GrappleConfig.class, Toml4jConfigSerializer::new);
     }
 
     @SubscribeEvent

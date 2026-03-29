@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -85,8 +86,7 @@ public class ClientSetup {
 		
 	    EntityRenderers.register(CommonSetup.grapplehookEntityType.get(), new GrapplehookEntityRenderFactory());
 
-		ModLoadingContext.get().registerExtensionPoint(IConfigScreenFactory.class,
-    		() -> (modContainer, screen) -> ((ClientProxy) ClientProxyInterface.proxy).onConfigScreen(screen));
+		ModLoadingContext.get().registerExtensionPoint(IConfigScreenFactory.class, () -> ConfigurationScreen::new);
 		
 	    this.registerPropertyOverride();
 	    

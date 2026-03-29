@@ -8,11 +8,9 @@ import com.lonevox.grapplinghookneo.controllers.GrappleController;
 import com.lonevox.grapplinghookneo.utils.GrappleCustomization;
 import com.lonevox.grapplinghookneo.utils.GrapplemodUtils;
 import com.lonevox.grapplinghookneo.utils.Vec;
-import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -146,10 +144,6 @@ public class ClientProxy extends ClientProxyInterface {
 		return stack;
 	}
 	
-	public Screen onConfigScreen(Screen screen) {
-		return AutoConfig.getConfigScreen(GrappleConfig.class, screen).get();
-	}
-
 	@Override
 	public void resetLauncherTime(int playerid) {
 		ClientControllerManager.instance.resetLauncherTime(playerid);
