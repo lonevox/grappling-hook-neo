@@ -18,12 +18,15 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 
+@OnlyIn(Dist.CLIENT)
 public class GuiModifier extends Screen {
 	private static final ResourceLocation texture = ResourceLocation.fromNamespaceAndPath("grappling_hook_neo", "textures/gui/guimodifier_bg.png");
 

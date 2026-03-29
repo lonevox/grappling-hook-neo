@@ -1,18 +1,13 @@
 package com.lonevox.grapplinghookneo.network;
 
-import com.lonevox.grapplinghookneo.entities.grapplehook.GrapplehookEntity;
-import com.lonevox.grapplinghookneo.entities.grapplehook.SegmentHandler;
 import com.lonevox.grapplinghookneo.GrapplingHookNeo;
 import com.lonevox.grapplinghookneo.utils.Vec;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -61,24 +56,7 @@ public class SegmentMessage implements CustomPacketPayload {
     }
 
     public static void handle(SegmentMessage message, IPayloadContext context) {
-        Level world = Minecraft.getInstance().level;
-        if (world == null) {
-            return;
-        }
-
-        Entity grapple = world.getEntity(message.id);
-        if (grapple == null) {
-            return;
-        }
-
-        if (grapple instanceof GrapplehookEntity grapplehookEntity) {
-            SegmentHandler segmenthandler = grapplehookEntity.segmentHandler;
-            if (message.add) {
-                segmenthandler.actuallyAddSegment(message.index, message.pos, message.bottomFacing, message.topFacing);
-            } else {
-                segmenthandler.removeSegment(message.index);
-            }
-        }
+        context.enqueueWork(() -> ClientPacketBridgeAccess.get().handleSegment(message));
     }
 
     @Override

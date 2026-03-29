@@ -10,7 +10,6 @@ import com.lonevox.grapplinghookneo.network.PlayerMovementMessage;
 import com.lonevox.grapplinghookneo.utils.GrappleCustomization;
 import com.lonevox.grapplinghookneo.utils.GrapplemodUtils;
 import com.lonevox.grapplinghookneo.utils.Vec;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -562,7 +561,7 @@ public class GrappleController {
 		
 		if (entity.verticalCollision) {
 			if (entity.onGround()) {
-				if (!sliding && Minecraft.getInstance().options.keyJump.isDown()) {
+				if (!sliding && ClientProxyInterface.proxy.isKeyDown(ClientProxyInterface.McKeys.keyBindJump)) {
 					this.motion.y = entity.getDeltaMovement().y;
 				} else {
 					if (this.motion.y < 0) {

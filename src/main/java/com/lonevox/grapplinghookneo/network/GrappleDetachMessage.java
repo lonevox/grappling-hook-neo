@@ -1,7 +1,6 @@
 package com.lonevox.grapplinghookneo.network;
 
 import com.lonevox.grapplinghookneo.GrapplingHookNeo;
-import com.lonevox.grapplinghookneo.client.ClientControllerManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -33,7 +32,7 @@ public class GrappleDetachMessage implements CustomPacketPayload {
     }
 
     public static void handle(GrappleDetachMessage message, IPayloadContext context) {
-        ClientControllerManager.receiveGrappleDetach(message.id);
+        context.enqueueWork(() -> ClientPacketBridgeAccess.get().handleGrappleDetach(message));
     }
 
     @Override

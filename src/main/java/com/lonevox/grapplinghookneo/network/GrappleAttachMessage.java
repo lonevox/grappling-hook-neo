@@ -1,12 +1,8 @@
 package com.lonevox.grapplinghookneo.network;
 
 import com.lonevox.grapplinghookneo.GrapplingHookNeo;
-import com.lonevox.grapplinghookneo.client.ClientProxyInterface;
-import com.lonevox.grapplinghookneo.entities.grapplehook.GrapplehookEntity;
-import com.lonevox.grapplinghookneo.entities.grapplehook.SegmentHandler;
 import com.lonevox.grapplinghookneo.utils.GrappleCustomization;
 import com.lonevox.grapplinghookneo.utils.Vec;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
@@ -14,8 +10,6 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -114,24 +108,7 @@ public class GrappleAttachMessage implements CustomPacketPayload {
     }
 
     public static void handle(GrappleAttachMessage message, IPayloadContext context) {
-        Level world = Minecraft.getInstance().level;
-        if (world == null) {
-            return;
-        }
-
-        Entity grapple = world.getEntity(message.id);
-        if (grapple instanceof GrapplehookEntity grapplehookEntity) {
-            grapplehookEntity.clientAttach(message.x, message.y, message.z);
-            SegmentHandler segmenthandler = grapplehookEntity.segmentHandler;
-            segmenthandler.segments = message.segments;
-            segmenthandler.segmentBottomSides = message.segmentBottomSides;
-            segmenthandler.segmentTopSides = message.segmentTopSides;
-
-            Entity player = world.getEntity(message.entityId);
-            segmenthandler.forceSetPos(new Vec(message.x, message.y, message.z), Vec.positionVec(player));
-        }
-
-        ClientProxyInterface.proxy.createControl(message.controlId, message.id, message.entityId, world, new Vec(message.x, message.y, message.z), message.blockPos, message.custom);
+        context.enqueueWork(() -> ClientPacketBridgeAccess.get().handleGrappleAttach(message));
     }
 
     @Override

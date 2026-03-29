@@ -1,6 +1,5 @@
 package com.lonevox.grapplinghookneo.network;
 
-import com.lonevox.grapplinghookneo.client.ClientControllerManager;
 import com.lonevox.grapplinghookneo.GrapplingHookNeo;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -37,7 +36,7 @@ public class DetachSingleHookMessage implements CustomPacketPayload {
     }
 
     public static void handle(DetachSingleHookMessage message, IPayloadContext context) {
-        ClientControllerManager.receiveGrappleDetachHook(message.id, message.hookid);
+        context.enqueueWork(() -> ClientPacketBridgeAccess.get().handleDetachSingleHook(message));
     }
 
     @Override
