@@ -5,10 +5,10 @@
 			"item": "grappling_hook_neo:baseupgradeitem"
 		}, 
 		{
-			"item": "minecraft:firework_rocket"
+			"item": "minecraft:bow"
 		}
 	],
 	"result": {
-		"item": "grappling_hook_neo:rocketupgradeitem"
+		"id": "grappling_hook_neo:throwupgradeitem"
 	}
 }

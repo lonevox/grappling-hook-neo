@@ -5,13 +5,13 @@
 			"item": "grappling_hook_neo:baseupgradeitem"
 		}, 
 		{
-			"item": "grappling_hook_neo:grapplinghook"
+			"item": "minecraft:leather_boots"
 		},
 		{
-			"item": "grappling_hook_neo:grapplinghook"
+			"item": "minecraft:feather"
 		}
 	],
 	"result": {
-		"item": "grappling_hook_neo:doubleupgradeitem"
+		"id": "grappling_hook_neo:swingupgradeitem"
 	}
 }

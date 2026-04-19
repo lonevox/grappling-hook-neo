@@ -9,12 +9,16 @@
 		}
 	],
 	"result": {
-		"item": "grappling_hook_neo:grapplinghook",
-		"nbt": { "custom": {
-			"throwspeed": 3.5,
-			"maxlen": 60,
+    "id": "grappling_hook_neo:grapplinghook",
+    "components": {
+      "minecraft:custom_data": {
+        "custom": {
+					"throwspeed": 3.5,
+					"maxlen": 60,
 
-			"rocket": true
-		}}
+					"rocket": true
+				}
+			}
+		}
 	}
 }
