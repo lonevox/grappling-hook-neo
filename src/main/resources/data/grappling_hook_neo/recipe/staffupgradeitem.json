@@ -5,10 +5,10 @@
 			"item": "grappling_hook_neo:baseupgradeitem"
 		}, 
 		{
-			"item": "minecraft:lead"
+			"item": "grappling_hook_neo:launcheritem"
 		}
 	],
 	"result": {
-		"item": "grappling_hook_neo:ropeupgradeitem"
+		"id": "grappling_hook_neo:staffupgradeitem"
 	}
 }

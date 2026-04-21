@@ -5,10 +5,10 @@
 			"item": "grappling_hook_neo:baseupgradeitem"
 		}, 
 		{
-			"item": "grappling_hook_neo:repeller"
+			"item": "minecraft:piston"
 		}
 	],
 	"result": {
-		"item": "grappling_hook_neo:forcefieldupgradeitem"
+		"id": "grappling_hook_neo:motorupgradeitem"
 	}
 }

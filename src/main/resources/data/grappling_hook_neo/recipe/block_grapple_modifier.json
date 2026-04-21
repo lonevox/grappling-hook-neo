@@ -7,13 +7,13 @@
 	],
 	"key": {
 		"2": {
-			"item": "minecraft:iron_ingot"
+			"item": "grappling_hook_neo:baseupgradeitem"
 		}, 
 		"4": {
-			"item": "minecraft:compass"
+			"item": "minecraft:anvil"
 		}
 	},
 	"result": {
-		"item": "grappling_hook_neo:repeller"
+		"id": "grappling_hook_neo:block_grapple_modifier"
 	}
 }

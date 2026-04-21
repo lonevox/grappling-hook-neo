@@ -5,10 +5,10 @@
 			"item": "grappling_hook_neo:baseupgradeitem"
 		}, 
 		{
-			"item": "grappling_hook_neo:launcheritem"
+			"item": "minecraft:compass"
 		}
 	],
 	"result": {
-		"item": "grappling_hook_neo:staffupgradeitem"
+		"id": "grappling_hook_neo:magnetupgradeitem"
 	}
 }
